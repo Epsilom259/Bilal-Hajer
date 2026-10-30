@@ -30,7 +30,7 @@
             <button id="bHajer" onclick="setUser('Hajer')">Hajer 🌸</button>
             <button id="bBilal" onclick="setUser('Bilal')">Bilal ☕</button>
         </div>
-        <div class="sync-status">يعمل بكفاءة وثبات تام 🟢</div>
+        <div class="sync-status" id="syncStatus">متصل بالسحابة المشتركة 🟢</div>
     </header>
 
     <div class="container">
@@ -40,17 +40,21 @@
             <input type="text" id="title" placeholder="عنوان اليومية...">
             <label>المحتوى</label>
             <textarea id="content" placeholder="اكتب تفاصيل يومك ومشاعرك هنا..."></textarea>
-            <button onclick="publishDiary()">نشر اليومية 💌</button>
+            <button id="saveBtn" onclick="publishDiary()">نشر اليومية 💌</button>
         </div>
 
         <div id="wall">
-            <div class="empty-msg">جاري تحميل اليوميات... ⏳</div>
+            <div class="empty-msg">جاري مزامنة وتحميل اليوميات... ⏳</div>
         </div>
     </div>
 
     <script>
+        // رابط السحابة المشتركة المباشر والمستقر
+        const BIN_URL = 'https://api.jsonbin.io/v3/b/6ae49f5dac6210605a5ed8bb/latest';
+        const API_KEY = '$2a$10$yBgfnqBOorY5afo/XIZiAeLJ6/ryh/KK7Z2iAdkFwNHXHWLjgK/W';
+
         let currentUser = 'Hajer';
-        let diaries = JSON.parse(localStorage.getItem('bsunny_secure_diaries') || '[]');
+        let diaries = [];
 
         function setUser(user) {
             currentUser = user;
@@ -59,9 +63,34 @@
         }
         setUser('Hajer');
 
+        // دالة جلب اليوميات وتحديث الشاشة تلقائياً
+        async function fetchDiaries(silent = false) {
+            try {
+                let res = await fetch(BIN_URL + '?t=' + Date.now(), {
+                    headers: { 'X-Master-Key': API_KEY }
+                });
+                let data = await res.json();
+                if (data && data.record && Array.isArray(data.record.diaries)) {
+                    diaries = data.record.diaries;
+                    // حفظ نسخة احتياطية محلية لسرعة العرض
+                    localStorage.setItem('bsunny_backup', JSON.stringify(diaries));
+                    render();
+                    if(!silent) document.getElementById('syncStatus').innerText = 'متزامن مع السحابة 🟢';
+                }
+            } catch (e) {
+                // استخدام النسخ المحلية في حال انقطاع الشبكة المؤقت
+                let local = localStorage.getItem('bsunny_backup');
+                if (local) {
+                    diaries = JSON.parse(local);
+                    render();
+                }
+                if(!silent) document.getElementById('syncStatus').innerText = 'وضع الاتصال المحلي 🟡';
+            }
+        }
+
         function render() {
             let wall = document.getElementById('wall');
-            if (diaries.length === 0) {
+            if (!diaries || diaries.length === 0) {
                 wall.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. كن أول من يشارك! ✨</div>';
                 return;
             }
@@ -80,7 +109,7 @@
             });
         }
 
-        function publishDiary() {
+        async function publishDiary() {
             let title = document.getElementById('title').value.trim();
             let content = document.getElementById('content').value.trim();
             
@@ -89,25 +118,59 @@
                 return;
             }
 
-            let newItem = {
-                id: Date.now(),
-                author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕️',
-                title: title,
-                content: content,
-                date: new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
-            };
+            let btn = document.getElementById('saveBtn');
+            btn.innerText = 'جاري النشر في السحابة... ⏳';
+            btn.disabled = true;
 
-            diaries.unshift(newItem);
-            localStorage.setItem('bsunny_secure_diaries', JSON.stringify(diaries));
+            try {
+                // جلب أحدث البيانات أولاً لتفادي الكتابة فوق يومية الطرف الآخر
+                await fetchDiaries(true);
 
-            document.getElementById('title').value = '';
-            document.getElementById('content').value = '';
-            
-            render();
-            alert('تم نشر وحفظ اليومية بنجاح تام! 🧡');
+                let newItem = {
+                    id: Date.now(),
+                    author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕️',
+                    title: title,
+                    content: content,
+                    date: new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
+                };
+
+                diaries.unshift(newItem);
+
+                // حفظ القائمة المحدثة في السحابة
+                let putRes = await fetch('https://api.jsonbin.io/v3/b/6ae49f5dac6210605a5ed8bb', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify({ diaries: diaries })
+                });
+
+                if (putRes.ok) {
+                    localStorage.setItem('bsunny_backup', JSON.stringify(diaries));
+                    document.getElementById('title').value = '';
+                    document.getElementById('content').value = '';
+                    render();
+                    alert('تم نشر وحفظ اليومية للطرفين بنجاح تام! 🧡');
+                } else {
+                    alert('تعذر الحفظ السحابي، يرجى المحاولة مرة أخرى.');
+                }
+            } catch (e) {
+                console.error(e);
+                alert('حدث خطأ في الاتصال أثناء النشر.');
+            } finally {
+                btn.innerText = 'نشر اليومية 💌';
+                btn.disabled = false;
+            }
         }
 
-        render();
+        // جلب البيانات عند فتح الصفحة
+        fetchDiaries();
+
+        // تحديث تلقائي كل 6 ثوانٍ لظهور يوميات الطرف الآخر فوراً دون الحاجة لتحديث الصفحة
+        setInterval(() => {
+            fetchDiaries(true);
+        }, 6000);
     </script>
 </body>
 </html>
