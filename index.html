@@ -140,7 +140,7 @@
             <button class="btn-submit" id="btnLogin">دخول</button>
         </div>
 
-        <!-- شاشة اليوميات (تظهر فقط بعد الدخول) -->
+        <!-- شاشة اليوميات -->
         <div id="appSection" class="hidden">
             <div class="card">
                 <h3>اكتب يومياتك اليوم ✍️</h3>
@@ -167,7 +167,6 @@
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // إعدادات Firebase الخاصة بمشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyDqi9zD51Y5pQpJx1vD3Hk8qzyeyAOUhNY",
             authDomain: "hajer-1fb43.firebaseapp.com",
@@ -178,11 +177,16 @@
             measurementId: "G-JC3BWYY9TE"
         };
 
-        // ربط الأسماء بالبريد الإلكتروني
         const PEOPLE = {
-            'keifo259@gmail.com': 'Hajer 🌸', // استبدلها ببريد هاجر الحقيقي
-            'bkeifo@gmail.com.com': 'Bilal ☕'   // استبدلها ببريدك الحقيقي
+            'bkeifo@gmail.com': 'Bilal ☕',
+            'keifo259@gmail.com': 'Hajer 🌸'
         };
+
+        function getAuthorName(email) {
+            if (!email) return 'مجهول';
+            const cleanEmail = email.trim().toLowerCase();
+            return PEOPLE[cleanEmail] || email;
+        }
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -191,13 +195,11 @@
         let currentUser = null;
         let unsubscribeSnapshot = null;
 
-        // العناصر
         const loginSection = document.getElementById('loginSection');
         const appSection = document.getElementById('appSection');
         const userInfo = document.getElementById('userInfo');
         const userEmailSpan = document.getElementById('userEmail');
 
-        // تسجيل الدخول
         document.getElementById('btnLogin').addEventListener('click', async () => {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -208,10 +210,8 @@
             }
         });
 
-        // تسجيل الخروج
         document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
 
-        // مراقبة حالة تسجيل الدخول
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             if (user) {
@@ -219,7 +219,7 @@
                 appSection.classList.remove('hidden');
                 userInfo.classList.remove('hidden');
                 
-                const displayName = PEOPLE[user.email] || user.email;
+                const displayName = getAuthorName(user.email);
                 userEmailSpan.innerText = `أهلاً بك: ${displayName}`;
 
                 listenToDiaries();
@@ -231,7 +231,6 @@
             }
         });
 
-        // نشر اليومية
         document.getElementById('btnPublish').addEventListener('click', async () => {
             const titleInput = document.getElementById('diaryTitle');
             const contentInput = document.getElementById('diaryContent');
@@ -249,7 +248,7 @@
                     content: content,
                     authorId: currentUser.uid,
                     authorEmail: currentUser.email,
-                    authorName: PEOPLE[currentUser.email] || currentUser.email,
+                    authorName: getAuthorName(currentUser.email),
                     createdAt: serverTimestamp()
                 });
 
@@ -260,7 +259,6 @@
             }
         });
 
-        // الاستماع اللحظي الفوري لليوميات (المزامنة)
         function listenToDiaries() {
             const q = query(collection(db, "diaries"), orderBy("createdAt", "desc"));
             unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
@@ -274,7 +272,19 @@
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
                     const id = docSnap.id;
-                    const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }) : 'الآن';
+                    
+                    // عرض التاريخ والوقت بدقة (الساعة والدقيقة)
+                    let dateStr = 'الآن';
+                    if (data.createdAt && data.createdAt.seconds) {
+                        const dateObj = new Date(data.createdAt.seconds * 1000);
+                        dateStr = dateObj.toLocaleDateString('ar-EG', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
 
                     const item = document.createElement('div');
                     item.className = 'diary-item';
@@ -289,7 +299,7 @@
                     `;
 
                     item.querySelector('.diary-title').textContent = data.title;
-                    item.querySelector('.diary-author').textContent = data.authorName;
+                    item.querySelector('.diary-author').textContent = getAuthorName(data.authorName || data.authorEmail);
                     item.querySelector('.diary-content').textContent = data.content;
 
                     if (data.authorId === currentUser.uid) {
