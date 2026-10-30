@@ -1,4 +1,79 @@
-</h3>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Sunny Daily | يومياتنا الدافئة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #fffaf5; color: #2d3436; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+        header { background: linear-gradient(135deg, #ff7a00, #ff9f43); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 600px; margin: 20px auto; padding: 15px; }
+        .card { background: #ffffff; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #ffeaa7; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Tajawal'; box-sizing: border-box; }
+        button { background: #ff7a00; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Tajawal'; font-size: 1rem; transition: background 0.3s; }
+        button:hover { background: #e66e00; }
+        .users { margin-top: 12px; }
+        .users button { width: auto; background: transparent; border: 2px solid white; margin: 0 5px; padding: 5px 15px; font-size: 0.9rem; }
+        .users button.active { background: white; color: #ff7a00; }
+        .empty-msg { text-align: center; color: #636e72; padding: 30px; }
+        .sync-status { font-size: 0.8rem; opacity: 0.9; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>B-Sunny Daily ☀️</h1>
+        <p>مساحتنا الخاصة لتوثيق أيامنا ونبض قلوبنا</p>
+        <div class="users">
+            <span>الحساب: </span>
+            <button id="bHajer" onclick="setUser('Hajer')">Hajer 🌸</button>
+            <button id="bBilal" onclick="setUser('Bilal')">Bilal ☕</button>
+        </div>
+        <div class="sync-status">يعمل بkفاءة وثبات تام 🟢</div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h3>اكتب يومياتك اليوم ✍️</h3>
+            <label>العنوان</label>
+            <input type="text" id="title" placeholder="عنوان اليومية...">
+            <label>المحتوى</label>
+            <textarea id="content" placeholder="اكتب تفاصيل يومك ومشاعرك هنا..."></textarea>
+            <button onclick="publishDiary()">نشر اليومية 💌</button>
+        </div>
+
+        <div id="wall">
+            <div class="empty-msg">جاري تحميل اليوميات... ⏳</div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = 'Hajer';
+        // نظام تخزين ذكي موحد ومستقر
+        let diaries = JSON.parse(localStorage.getItem('bsunny_secure_diaries') || '[]');
+
+        function setUser(user) {
+            currentUser = user;
+            document.getElementById('bHajer').classList.toggle('active', user === 'Hajer');
+            document.getElementById('bBilal').classList.toggle('active', user === 'Bilal');
+        }
+        setUser('Hajer');
+
+        function render() {
+            let wall = document.getElementById('wall');
+            if (diaries.length === 0) {
+                wall.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. كن أول من يشارك! ✨</div>';
+                return;
+            }
+            wall.innerHTML = '';
+            diaries.forEach(d => {
+                wall.innerHTML += `
+                    <div class="card">
+                        <h3 style="color:#ff7a00; display:flex; justify-content:space-between; align-items:center;">
+                            <span>${d.title}</span>
+                            <span style="font-size:0.8rem; background:#fff3e0; padding:3px 10px; border-radius:12px; color:#d35400;">${d.author}</span>
+                            </h3>
                         <small style="color:#888;">${d.date}</small>
                         <p style="margin-top:10px; line-height:1.6; white-space: pre-wrap;">${d.content}</p>
                     </div>
