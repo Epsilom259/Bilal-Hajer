@@ -1,34 +1,12 @@
-render();
-                    document.getElementById('syncStatus').innerText = 'المزامنة متصلة وسحابية 🟢';
-                }
-            } catch (e) {
-                console.error(e);
-                document.getElementById('syncStatus').innerText = 'وضع الاتصال المحلي 🟡';
-            }
-        }
-
-        function render() {
-            let wall = document.getElementById('wall');
-            if (!diaries || diaries.length === 0) {
-                wall.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. كن أول من يشارك! ✨</div>';
-                return;
-            }
-            wall.innerHTML = '';
-            diaries.forEach(d => {
-                wall.innerHTML += 
-                    <div class="card">
-                        <h3 style="color:#ff7a00; display:flex; justify-content:space-between; align-items:center;">
-                            <span>${d.title}</span>
-                            <span style="font-size:0.8rem; background:#fff3e0; padding:3px 10px; border-radius:12px; color:#d35400;">${d.author}</span>
-                        </h3>
+</h3>
                         <small style="color:#888;">${d.date}</small>
                         <p style="margin-top:10px; line-height:1.6; white-space: pre-wrap;">${d.content}</p>
                     </div>
-                ;
+                `;
             });
         }
 
-        async function publishDiary() {
+        function publishDiary() {
             let title = document.getElementById('title').value.trim();
             let content = document.getElementById('content').value.trim();
             
@@ -37,53 +15,25 @@ render();
                 return;
             }
 
-            let btn = document.getElementById('saveBtn');
-            btn.innerText = 'جاري الحفظ... ⏳';
-            btn.disabled = true;
+            let newItem = {
+                id: Date.now(),
+                author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕️',
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
+            };
 
-            try {
-                // جلب أحدث بيانات قبل الإضافة
-                try {
-                    let getRes = await fetch(API_ENDPOINT + '?cache=' + Date.now());
-                    if (getRes.ok) {
-                        let latest = await getRes.json();
-                        if (Array.isArray(latest)) diaries = latest;
-                    }
-                } catch(e) {}
+            diaries.unshift(newItem);
+            localStorage.setItem('bsunny_secure_diaries', JSON.stringify(diaries));
 
-                let newItem = {
-                    id: Date.now(),
-                    author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕️',
-                    title: title,
-                    content: content,
-                    date: new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })
-                };
-
-                diaries.unshift(newItem);
-
-                // حفظ في السحابة
-                let postRes = await fetch(API_ENDPOINT, {
-                    method: 'POST',
-                    body: JSON.stringify(diaries)
-                });
-
-                document.getElementById('title').value = '';
-                document.getElementById('content').value = '';
-                render();
-                alert('تم نشر وحفظ اليومية بنجاح بين الجهازين! 🧡');
-
-            } catch (e) {
-                console.error(e);
-                alert('تم الحفظ محلياً بنجاح.');
-            } finally {
-                btn.innerText = 'نشر اليومية 💌';
-                btn.disabled = false;
-            }
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            
+            render();
+            alert('تم نشر وحفظ اليومية بنجاح تام! 🧡');
         }
 
-        // تشغيل وجلب البيانات وتحديث تلقائي كل 6 ثوانٍ
-        fetchDiaries();
-        setInterval(fetchDiaries, 6000);
+        render();
     </script>
 </body>
 </html>
