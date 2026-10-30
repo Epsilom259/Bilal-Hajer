@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Sunny Daily | يومياتنا الدافئة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #ff9f43;
+            --light-bg: #fffaf5;
+            --card-bg: #ffffff;
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --accent-pink: #ff6b81;
+            --border-color: #ffeaa7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2);
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+
+        .profile-switcher {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 30px;
+            display: inline-flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .profile-btn {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+
+        .profile-btn.active {
+            background: white;
+            color: var(--primary);
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 0 15px;
+            flex: 1;
+            width: 100%;
+        }
+
+        .quote-box {
+            background: linear-gradient(to right, #fff3e0, #ffe0b2);
+            border-right: 4px solid var(--primary);
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            color: #d35400;
+            text-align: center;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card .date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .card p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            border-top: 1px solid #f1f2f6;
+            padding-top: 12px;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .action-btn.liked {
+            color: var(--accent-pink);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .submit-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #e66e00;
+        }
+
+        .empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px;
+            font-size: 1rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background: #fff;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>B-Sunny Daily ☀️</h1>
+        <p>مساحتنا الخاصة لتوثيق تفاصيل أيامنا ونبض قلوبنا</p>
+        <div class="profile-switcher">
+            <span style="align-self: center; font-size: 0.85rem;">أنت الآن تستخدم حساب:</span>
+            <button class="profile-btn active" id="btn-hajer" onclick="switchUser('Hajer')">Hajer 🌸</button>
+            <button class="profile-btn" id="btn-bilal" onclick="switchUser('Bilal')">Bilal ☕</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="quote-box">
+            "بعض الوجهات ليست أماكن.. بل أشخاص تشرق الشمس بوجودهم." ✨
+        </div>
+
+        <!-- نموذج إضافة يومية -->
+        <div class="card">
+            <h3>اكتب يومياتك اليوم <span style="font-size: 1.2rem;">✍️</span></h3>
+            <div class="form-group">
+                <label>عنوان اليومية</label>
+                <input type="text" id="diaryTitle" placeholder="مثال: قهوة الصباح وتفاصيلك...">
+            </div>
+            <div class="form-group">
+                <label>ماذا حدث اليوم؟</label>
+                <textarea id="diaryContent" placeholder="اكتب مشاعرك وتفاصيل يومك هنا..."></textarea>
+            </div>
+            <button class="submit-btn" onclick="addDiary()">نشر اليومية 💌</button>
+        </div>
+
+        <!-- حائط اليوميات -->
+        <div id="diariesWall">
+            <div class="empty-msg">جاري تحميل اليوميات من السحابة... ⏳</div>
+        </div>
+    </div>
+
+    <footer>
+        جميع الحقوق محفوظة &copy; B-Sunny Daily 2026 🧡
+    </footer>
+
+    <script>
+        // إعدادات الربط السحابي (JSONBin.io)
+        const BIN_ID = '6ae49ca4ffd5d16053988181'; 
+        const API_KEY = '$2a$10$yBgfnqBOorY5afo/XIZiAeLJ6/ryh/KK7Z2iAdkFwNHXHWLjgK/W'; 
+
+        let currentUser = 'Hajer';
+        let diaries = [];
+
+        function switchUser(user) {
+            currentUser = user;
+            document.getElementById('btn-hajer').classList.toggle('active', user === 'Hajer');
+            document.getElementById('btn-bilal').classList.toggle('active', user === 'Bilal');
+        }
+
+        async function fetchDiaries() {
+            try {
+                const response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+                    headers: {
+                        'X-Master-Key': API_KEY
+                    }
+                });
+                const data = await response.json();
+                diaries = data.record.diaries || [];
+                renderDiaries();
+            } catch (error) {
+                console.error('خطأ في جلب البيانات:', error);
+                document.getElementById('diariesWall').innerHTML = '<div class="empty-msg">تعذر الاتصال بالسحابة.</div>';
+            }
+        }
+
+        async function saveDiaries() {
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': API_KEY
+                    },
+                    body: JSON.stringify({ diaries: diaries })
+                });
+            } catch (error) {
+                console.error('خطأ في الحفظ:', error);
+            }
+        }
+
+        function renderDiaries() {
+            const wall = document.getElementById('diariesWall');
+            wall.innerHTML = '';
+
+            if (diaries.length === 0) {
+                wall.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. كن أول من يشارك يومياته اليوم! ✨</div>';
+                return;
+            }
+
+            diaries.forEach(item => {
+                wall.innerHTML += `
+                    <div class="card">
+                        <h3>
+                            <span>${item.title}</span>
+                            <span style="font-size: 0.85rem; color: var(--primary); background: #fff3e0; padding: 3px 10px; border-radius: 12px;">${item.author}</span>
+                        </h3>
+                        <div class="date">${item.date}</div>
+                        <p>${item.content}</p>
+                        <div class="actions">
+                            <button class="action-btn ${item.liked ? 'liked' : ''}" onclick="toggleLike(${item.id})">
+                                ❤️ <span>${item.likes}</span> إعجاب
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        async function addDiary() {
+            const title = document.getElementById('diaryTitle').value;
+            const content = document.getElementById('diaryContent').value;
+
+            if(!title || !content) {
+                alert('الرجاء كتابة العنوان والمحتوى أولاً!');
+                return;
+            }
+
+            const newEntry = {
+                id: Date.now(),
+                author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕',
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' }),
+                likes: 0,
+                liked: false
+            };
+
+            diaries.unshift(newEntry);
+            await saveDiaries(); 
+            document.getElementById('diaryTitle').value = '';
+            document.getElementById('diaryContent').value = '';
+            renderDiaries();
+        }
+
+        async function toggleLike(id) {
+            const item = diaries.find(d => d.id === id);
+            if(item) {
+                if(item.liked) {
+                    item.likes--;
+                    item.liked = false;
+                } else {
+                    item.likes++;
+                    item.liked = true;
+                }
+                await saveDiaries(); 
+                renderDiaries();
+            }
+        }
+
+        fetchDiaries();
+    </script>
+</body>
+</html>
