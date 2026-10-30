@@ -186,6 +186,13 @@
             background: #e66e00;
         }
 
+        .empty-msg {
+            text-align: center;
+            color: var(--text-muted);
+            padding: 30px;
+            font-size: 1rem;
+        }
+
         footer {
             text-align: center;
             padding: 15px;
@@ -203,8 +210,8 @@
         <p>مساحتنا الخاصة لتوثيق تفاصيل أيامنا ونبض قلوبنا</p>
         <div class="profile-switcher">
             <span style="align-self: center; font-size: 0.85rem;">أنت الآن تستخدم حساب:</span>
-            <button class="profile-btn active" id="btn-leila" onclick="switchUser('ليلى')">ليلى 🌸</button>
-            <button class="profile-btn" id="btn-sami" onclick="switchUser('سامي')">سامي ☕</button>
+            <button class="profile-btn active" id="btn-hajer" onclick="switchUser('Hajer')">Hajer 🌸</button>
+            <button class="profile-btn" id="btn-bilal" onclick="switchUser('Bilal')">Bilal ☕</button>
         </div>
     </header>
 
@@ -229,7 +236,7 @@
 
         <!-- حائط اليوميات -->
         <div id="diariesWall">
-            <!-- يتم تعبئة اليوميات هنا برمجياً -->
+            <!-- سيتم تعبئة اليوميات هنا عند نشرها -->
         </div>
     </div>
 
@@ -238,38 +245,25 @@
     </footer>
 
     <script>
-        let currentUser = 'ليلى';
+        let currentUser = 'Hajer';
 
-        let diaries = [
-            {
-                id: 1,
-                author: 'سامي ☕',
-                title: 'صباح الخير يا أجمل إشراقة',
-                content: 'بدأت يومي بكوب قهوة وتذكرت ضحكتك حين تتحدثين عن تفاصيل يومك البسيطة. أتمنى لكِ يوماً مليئاً بالفرح.',
-                date: '30 أكتوبر 2026',
-                likes: 3,
-                liked: false
-            },
-            {
-                id: 2,
-                author: 'ليلى 🌸',
-                title: 'يوم هادئ يشبه قلوبنا',
-                content: 'اليوم كان جميلاً ومريحاً، استمتعت بالغروب وأنا أفكر في الكلمات التي ستكتبها لي اليوم. طاب يومك يا سندي.',
-                date: '30 أكتوبر 2026',
-                likes: 5,
-                liked: true
-            }
-        ];
+        // تم مسح الرسائل واليوميات القديمة بالكامل
+        let diaries = [];
 
         function switchUser(user) {
             currentUser = user;
-            document.getElementById('btn-leila').classList.toggle('active', user === 'ليلى');
-            document.getElementById('btn-sami').classList.toggle('active', user === 'سامي');
+            document.getElementById('btn-hajer').classList.toggle('active', user === 'Hajer');
+            document.getElementById('btn-bilal').classList.toggle('active', user === 'Bilal');
         }
 
         function renderDiaries() {
             const wall = document.getElementById('diariesWall');
             wall.innerHTML = '';
+
+            if (diaries.length === 0) {
+                wall.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. كن أول من يشارك يومياته اليوم! ✨</div>';
+                return;
+            }
 
             diaries.forEach(item => {
                 wall.innerHTML += `
@@ -301,7 +295,7 @@
 
             const newEntry = {
                 id: diaries.length + 1,
-                author: currentUser === 'ليلى' ? 'ليلى 🌸' : 'سامي ☕',
+                author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕',
                 title: title,
                 content: content,
                 date: 'اليوم',
