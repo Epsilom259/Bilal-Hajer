@@ -104,14 +104,8 @@
 
         .diary-title { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
         .diary-author { font-size: 0.8rem; background: #fff3e0; padding: 3px 10px; border-radius: 12px; color: #d35400; }
-        .diary-date { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .diary-date { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
         .diary-content { line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
-
-        .seen-status {
-            font-size: 0.75rem;
-            color: #27ae60;
-            font-weight: 600;
-        }
 
         .diary-actions { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
         .btn-action { background: none; border: none; font-size: 0.85rem; cursor: pointer; color: var(--muted); }
@@ -171,7 +165,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDqi9zD51Y5pQpJx1vD3Hk8qzyeyAOUhNY",
@@ -184,3 +178,145 @@
         };
 
         const PEOPLE = {
+            'bkeifo@gmail.com': 'Bilal ☕',
+            'keifo259@gmail.com': 'Hajer 🌸'
+        };
+
+        function getAuthorName(email) {
+            if (!email) return 'مجهول';
+            const cleanEmail = email.trim().toLowerCase();
+            return PEOPLE[cleanEmail] || email;
+        }
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsubscribeSnapshot = null;
+
+        const loginSection = document.getElementById('loginSection');
+        const appSection = document.getElementById('appSection');
+        const userInfo = document.getElementById('userInfo');
+        const userEmailSpan = document.getElementById('userEmail');
+
+        document.getElementById('btnLogin').addEventListener('click', async () => {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+            } catch (err) {
+                alert('خطأ في البيانات: ' + err.message);
+            }
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                loginSection.classList.add('hidden');
+                appSection.classList.remove('hidden');
+                userInfo.classList.remove('hidden');
+                
+                const displayName = getAuthorName(user.email);
+                userEmailSpan.innerText = `أهلاً بك: ${displayName}`;
+
+                listenToDiaries();
+            } else {
+                loginSection.classList.remove('hidden');
+                appSection.classList.add('hidden');
+                userInfo.classList.add('hidden');
+                if (unsubscribeSnapshot) unsubscribeSnapshot();
+            }
+        });
+
+        document.getElementById('btnPublish').addEventListener('click', async () => {
+            const titleInput = document.getElementById('diaryTitle');
+            const contentInput = document.getElementById('diaryContent');
+            const title = titleInput.value.trim();
+            const content = contentInput.value.trim();
+
+            if (!title || !content) {
+                alert('يرجى كتابة العنوان والمحتوى!');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, "diaries"), {
+                    title: title,
+                    content: content,
+                    authorId: currentUser.uid,
+                    authorEmail: currentUser.email,
+                    authorName: getAuthorName(currentUser.email),
+                    createdAt: serverTimestamp()
+                });
+
+                titleInput.value = '';
+                contentInput.value = '';
+            } catch (err) {
+                alert('تعذر الحفظ: ' + err.message);
+            }
+        });
+
+        function listenToDiaries() {
+            const q = query(collection(db, "diaries"), orderBy("createdAt", "desc"));
+            unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('diariesList');
+                if (snapshot.empty) {
+                    list.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. شاركنا أول يومية! ✨</div>';
+                    return;
+                }
+
+                list.innerHTML = '';
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    const id = docSnap.id;
+                    
+                    // عرض التاريخ والوقت بدقة (الساعة والدقيقة)
+                    let dateStr = 'الآن';
+                    if (data.createdAt && data.createdAt.seconds) {
+                        const dateObj = new Date(data.createdAt.seconds * 1000);
+                        dateStr = dateObj.toLocaleDateString('ar-EG', { 
+                            year: 'numeric', 
+                            month: 'long', 
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+
+                    const item = document.createElement('div');
+                    item.className = 'diary-item';
+                    item.innerHTML = `
+                        <div class="diary-header">
+                            <span class="diary-title"></span>
+                            <span class="diary-author"></span>
+                        </div>
+                        <div class="diary-date">${dateStr}</div>
+                        <div class="diary-content"></div>
+                        ${data.authorId === currentUser.uid ? `<div class="diary-actions"><button class="btn-action delete">حذف 🗑️</button></div>` : ''}
+                    `;
+
+                    item.querySelector('.diary-title').textContent = data.title;
+                    item.querySelector('.diary-author').textContent = getAuthorName(data.authorName || data.authorEmail);
+                    item.querySelector('.diary-content').textContent = data.content;
+
+                    if (data.authorId === currentUser.uid) {
+                        item.querySelector('.delete').addEventListener('click', async () => {
+                            if (confirm('هل تريد حذف هذه اليومية؟')) {
+                                await deleteDoc(doc(db, "diaries", id));
+                            }
+                        });
+                    }
+
+                    list.appendChild(item);
+                });
+            }, (error) => {
+                console.error(error);
+                document.getElementById('diariesList').innerHTML = '<div class="empty-msg">حدث خطأ أثناء تحميل اليوميات. تأكد من قواعد الأمان.</div>';
+            });
+        }
+    </script>
+</body>
+</html>
