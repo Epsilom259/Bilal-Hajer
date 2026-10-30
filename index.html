@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Sunny Daily | يومياتنا الدافئة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #fffaf5; color: #2d3436; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+        header { background: linear-gradient(135deg, #ff7a00, #ff9f43); color: white; padding: 20px; text-align: center; }
+        .container { max-width: 600px; margin: 20px auto; padding: 15px; }
+        .card { background: #ffffff; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #ffeaa7; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Tajawal'; }
+        button { background: #ff7a00; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; font-family: 'Tajawal'; }
+        .users { margin-top: 10px; }
+        .users button { width: auto; background: transparent; border: 2px solid white; margin: 0 5px; }
+        .users button.active { background: white; color: #ff7a00; }
+        .empty-msg { text-align: center; color: #636e72; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>B-Sunny Daily ☀️</h1>
+        <p>مساحتنا الخاصة لتوثيق أيامنا ونبض قلوبنا</p>
+        <div class="users">
+            <button id="bHajer" onclick="setUser('Hajer')">Hajer 🌸</button>
+            <button id="bBilal" onclick="setUser('Bilal')">Bilal ☕</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h3>اكتب يومياتك اليوم ✍️</h3>
+            <label>العنوان</label>
+            <input type="text" id="title" placeholder="عنوان اليومية...">
+            <label>المحتوى</label>
+            <textarea id="content" placeholder="اكتب تفاصيل يومك..."></textarea>
+            <button onclick="saveDiary()">نشر اليومية 💌</button>
+        </div>
+
+        <div id="wall">
+            <div class="empty-msg">جاري تحميل اليوميات من السحابة... ⏳</div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://api.npoint.io/15aaad853f14c3afbf95';
+        let currentUser = 'Hajer';
+        let diaries = [];
+
+        function setUser(user) {
+            currentUser = user;
+            document.getElementById('bHajer').classList.toggle('active', user === 'Hajer');
+            document.getElementById('bBilal').classList.toggle('active', user === 'Bilal');
+        }
+        setUser('Hajer');
+
+        async function loadDiaries() {
+            try {
+                let res = await fetch(API_URL);
+                let data = await res.json();
+                if (data && Array.isArray(data.diaries)) {
+                    diaries = data.diaries;
+                } else {
+                    diaries = [];
+                }
+                render();
+            } catch (e) {
+                document.getElementById('wall').innerHTML = '<div class="empty-msg">تعذر الاتصال بالسحابة</div>';
+            }
+        }
+
+        async function saveCloud() {
+            try {
+                await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ diaries: diaries })
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        function render() {
+            let wall = document.getElementById('wall');
+            if (diaries.length === 0) {
+                wall.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. كن أول من يشارك! ✨</div>';
+                return;
+            }
+            wall.innerHTML = '';
+            diaries.forEach(d => {
+                wall.innerHTML += `
+                    <div class="card">
+                        <h3 style="color:#ff7a00; display:flex; justify-content:space-between;">
+                            <span>${d.title}</span>
+                            <span style="font-size:0.8rem; background:#fff3e0; padding:2px 8px; border-radius:10px;">${d.author}</span>
+                        </h3>
+                        <small style="color:#888;">${d.date}</small>
+                        <p style="margin-top:10px; line-height:1.6;">${d.content}</p>
+                    </div>
+                `;
+            });
+        }
+
+        async function saveDiary() {
+            let title = document.getElementById('title').value;
+            let content = document.getElementById('content').value;
+            if(!title || !content) {
+                alert('الرجاء ملء الحقول!');
+                return;
+            }
+
+            let newItem = {
+                id: Date.now(),
+                author: currentUser === 'Hajer' ? 'Hajer 🌸' : 'Bilal ☕️',
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            diaries.unshift(newItem);
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            
+            render();
+            await saveCloud();
+            alert('تم نشر وحفظ اليومية في السحابة بنجاح! 🧡');
+        }
+
+        loadDiaries();
+    </script>
+</body>
+</html>
