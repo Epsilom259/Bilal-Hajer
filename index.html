@@ -49,10 +49,9 @@
     </div>
 
     <script>
-        // رابط السحابة المشتركة المباشر والمستقر
-        const BIN_URL = 'https://api.jsonbin.io/v3/b/6ae49f5dac6210605a5ed8bb/latest';
-        const API_KEY = '$2a$10$yBgfnqBOorY5afo/XIZiAeLJ6/ryh/KK7Z2iAdkFwNHXHWLjgK/W';
-
+        // الرابط الجديد الخاص بك الذي أنشأته للتو
+        const API_URL = 'https://api.npoint.io/1a9b2e358b0e1ff768ff';
+        
         let currentUser = 'Hajer';
         let diaries = [];
 
@@ -63,28 +62,21 @@
         }
         setUser('Hajer');
 
-        // دالة جلب اليوميات وتحديث الشاشة تلقائياً
+        // جلب اليوميات من السحابة مباشرة
         async function fetchDiaries(silent = false) {
             try {
-                let res = await fetch(BIN_URL + '?t=' + Date.now(), {
-                    headers: { 'X-Master-Key': API_KEY }
-                });
-                let data = await res.json();
-                if (data && data.record && Array.isArray(data.record.diaries)) {
-                    diaries = data.record.diaries;
-                    // حفظ نسخة احتياطية محلية لسرعة العرض
-                    localStorage.setItem('bsunny_backup', JSON.stringify(diaries));
-                    render();
-                    if(!silent) document.getElementById('syncStatus').innerText = 'متزامن مع السحابة 🟢';
+                let res = await fetch(API_URL + '?t=' + Date.now());
+                if (res.ok) {
+                    let data = await res.json();
+                    if (data && Array.isArray(data.diaries)) {
+                        diaries = data.diaries;
+                        render();
+                        if (!silent) document.getElementById('syncStatus').innerText = 'متصل بالسحابة 🟢';
+                    }
                 }
             } catch (e) {
-                // استخدام النسخ المحلية في حال انقطاع الشبكة المؤقت
-                let local = localStorage.getItem('bsunny_backup');
-                if (local) {
-                    diaries = JSON.parse(local);
-                    render();
-                }
-                if(!silent) document.getElementById('syncStatus').innerText = 'وضع الاتصال المحلي 🟡';
+                console.error(e);
+                if (!silent) document.getElementById('syncStatus').innerText = 'خطأ في الاتصال 🟡';
             }
         }
 
@@ -123,8 +115,14 @@
             btn.disabled = true;
 
             try {
-                // جلب أحدث البيانات أولاً لتفادي الكتابة فوق يومية الطرف الآخر
-                await fetchDiaries(true);
+                // جلب أحدث بيانات السحابة أولاً لدمجها بدقة
+                let getRes = await fetch(API_URL + '?t=' + Date.now());
+                if (getRes.ok) {
+                    let currentData = await getRes.json();
+                    if (currentData && Array.isArray(currentData.diaries)) {
+                        diaries = currentData.diaries;
+                    }
+                }
 
                 let newItem = {
                     id: Date.now(),
@@ -136,38 +134,34 @@
 
                 diaries.unshift(newItem);
 
-                // حفظ القائمة المحدثة في السحابة
-                let putRes = await fetch('https://api.jsonbin.io/v3/b/6ae49f5dac6210605a5ed8bb', {
+                // حفظ القائمة المحدثة في السحابة عبر الـ API الجديد
+                let putRes = await fetch(API_URL, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': API_KEY
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ diaries: diaries })
                 });
 
                 if (putRes.ok) {
-                    localStorage.setItem('bsunny_backup', JSON.stringify(diaries));
                     document.getElementById('title').value = '';
                     document.getElementById('content').value = '';
                     render();
-                    alert('تم نشر وحفظ اليومية للطرفين بنجاح تام! 🧡');
+                    alert('تم نشر وحفظ اليومية في السحابة للطرفين بنجاح تام! 🧡');
                 } else {
-                    alert('تعذر الحفظ السحابي، يرجى المحاولة مرة أخرى.');
+                    alert('تعذر الحفظ في السحابة، يرجى المحاولة.');
                 }
             } catch (e) {
                 console.error(e);
-                alert('حدث خطأ في الاتصال أثناء النشر.');
+                alert('حدث خطأ في الاتصال بالسحابة.');
             } finally {
                 btn.innerText = 'نشر اليومية 💌';
                 btn.disabled = false;
             }
         }
 
-        // جلب البيانات عند فتح الصفحة
+        // جلب البيانات فور فتح الصفحة
         fetchDiaries();
 
-        // تحديث تلقائي كل 6 ثوانٍ لظهور يوميات الطرف الآخر فوراً دون الحاجة لتحديث الصفحة
+        // تحديث تلقائي كل 6 ثوانٍ لظهور يوميات الطرف الآخر فوراً
         setInterval(() => {
             fetchDiaries(true);
         }, 6000);
