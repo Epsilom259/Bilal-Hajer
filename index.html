@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>B-Sunny Daily | يومياتنا الدافئة</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #ff7a00;
@@ -15,102 +15,24 @@
             --muted: #636e72;
             --border: #ffeaa7;
         }
-
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
         body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2);
-        }
-
-        header h1 { font-size: 1.8rem; margin-bottom: 5px; }
-        header p { font-size: 0.95rem; opacity: 0.9; }
-
-        .status-bar {
-            margin-top: 10px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-logout {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid white;
-            color: white;
-            padding: 3px 10px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 0.8rem;
-        }
-
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2); }
+        .status-bar { margin-top: 10px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-logout { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; }
         .container { max-width: 600px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; }
-
-        .card {
-            background: var(--card);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid var(--border);
-        }
-
+        .card { background: var(--card); border-radius: 15px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--primary); }
-        .form-group input, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-        }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .form-group textarea { resize: vertical; height: 100px; }
-
-        .btn-submit {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-submit:hover { background: #e66e00; }
-
-        .diary-item {
-            position: relative;
-            background: #fff;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid var(--border);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
-
-        .diary-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+        .diary-item { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .diary-title { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
         .diary-author { font-size: 0.8rem; background: #fff3e0; padding: 3px 10px; border-radius: 12px; color: #d35400; }
         .diary-date { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
         .diary-content { line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
-
-        .diary-actions { display: flex; gap: 8px; margin-top: 10px; justify-content: flex-end; }
-        .btn-action { background: none; border: none; font-size: 0.85rem; cursor: pointer; color: var(--muted); }
-        .btn-action.delete:hover { color: #e74c3c; }
-
         .login-box { text-align: center; max-width: 400px; margin: 40px auto; }
         .hidden { display: none !important; }
         .empty-msg { text-align: center; color: var(--muted); padding: 30px; }
@@ -128,195 +50,18 @@
     </header>
 
     <div class="container">
-        <!-- شاشة تسجيل الدخول -->
         <div id="loginSection" class="card login-box">
             <h3 style="color: var(--primary); margin-bottom: 15px;">تسجيل الدخول للمساحة الخاصة 🔐</h3>
-            <div class="form-group">
-                <input type="email" id="loginEmail" placeholder="البريد الإلكتروني">
-            </div>
-            <div class="form-group">
-                <input type="password" id="loginPassword" placeholder="كلمة المرور">
-            </div>
+            <div class="form-group"><input type="email" id="loginEmail" placeholder="البريد الإلكتروني"></div>
+            <div class="form-group"><input type="password" id="loginPassword" placeholder="كلمة المرور"></div>
             <button class="btn-submit" id="btnLogin">دخول</button>
         </div>
 
-        <!-- شاشة اليوميات -->
         <div id="appSection" class="hidden">
             <div class="card">
                 <h3>اكتب يومياتك اليوم ✍️</h3>
-                <div class="form-group">
-                    <label>العنوان</label>
-                    <input type="text" id="diaryTitle" placeholder="عنوان اليومية...">
-                </div>
-                <div class="form-group">
-                    <label>المحتوى</label>
-                    <textarea id="diaryContent" placeholder="اكتب تفاصيل يومك ومشاعرك هنا..."></textarea>
-                </div>
+                <div class="form-group"><label>العنوان</label><input type="text" id="diaryTitle" placeholder="عنوان اليومية..."></div>
+                <div class="form-group"><label>المحتوى</label><textarea id="diaryContent" placeholder="اكتب تفاصيل يومك ومشاعرك هنا..."></textarea></div>
                 <button class="btn-submit" id="btnPublish">نشر اليومية 💌</button>
             </div>
-
-            <div id="diariesList">
-                <div class="empty-msg">جاري تحميل اليوميات الفورية... ⏳</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK v10.7.1 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDqi9zD51Y5pQpJx1vD3Hk8qzyeyAOUhNY",
-            authDomain: "hajer-1fb43.firebaseapp.com",
-            projectId: "hajer-1fb43",
-            storageBucket: "hajer-1fb43.firebasestorage.app",
-            messagingSenderId: "258925603078",
-            appId: "1:258925603078:web:170319a22fe8bf891b9687",
-            measurementId: "G-JC3BWYY9TE"
-        };
-
-        const PEOPLE = {
-            'bkeifo@gmail.com': 'Bilal ☕',
-            'keifo259@gmail.com': 'Hajer 🌸'
-        };
-
-        function getAuthorName(email) {
-            if (!email) return 'مجهول';
-            const cleanEmail = email.trim().toLowerCase();
-            return PEOPLE[cleanEmail] || email;
-        }
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        let currentUser = null;
-        let unsubscribeSnapshot = null;
-
-        const loginSection = document.getElementById('loginSection');
-        const appSection = document.getElementById('appSection');
-        const userInfo = document.getElementById('userInfo');
-        const userEmailSpan = document.getElementById('userEmail');
-
-        document.getElementById('btnLogin').addEventListener('click', async () => {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (err) {
-                alert('خطأ في البيانات: ' + err.message);
-            }
-        });
-
-        document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
-
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                loginSection.classList.add('hidden');
-                appSection.classList.remove('hidden');
-                userInfo.classList.remove('hidden');
-                
-                const displayName = getAuthorName(user.email);
-                userEmailSpan.innerText = `أهلاً بك: ${displayName}`;
-
-                listenToDiaries();
-            } else {
-                loginSection.classList.remove('hidden');
-                appSection.classList.add('hidden');
-                userInfo.classList.add('hidden');
-                if (unsubscribeSnapshot) unsubscribeSnapshot();
-            }
-        });
-
-        document.getElementById('btnPublish').addEventListener('click', async () => {
-            const titleInput = document.getElementById('diaryTitle');
-            const contentInput = document.getElementById('diaryContent');
-            const title = titleInput.value.trim();
-            const content = contentInput.value.trim();
-
-            if (!title || !content) {
-                alert('يرجى كتابة العنوان والمحتوى!');
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, "diaries"), {
-                    title: title,
-                    content: content,
-                    authorId: currentUser.uid,
-                    authorEmail: currentUser.email,
-                    authorName: getAuthorName(currentUser.email),
-                    createdAt: serverTimestamp()
-                });
-
-                titleInput.value = '';
-                contentInput.value = '';
-            } catch (err) {
-                alert('تعذر الحفظ: ' + err.message);
-            }
-        });
-
-        function listenToDiaries() {
-            const q = query(collection(db, "diaries"), orderBy("createdAt", "desc"));
-            unsubscribeSnapshot = onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('diariesList');
-                if (snapshot.empty) {
-                    list.innerHTML = '<div class="empty-msg">لا توجد يوميات مكتوبة بعد.. شاركنا أول يومية! ✨</div>';
-                    return;
-                }
-
-                list.innerHTML = '';
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    const id = docSnap.id;
-                    
-                    // عرض التاريخ والوقت بدقة (الساعة والدقيقة)
-                    let dateStr = 'الآن';
-                    if (data.createdAt && data.createdAt.seconds) {
-                        const dateObj = new Date(data.createdAt.seconds * 1000);
-                        dateStr = dateObj.toLocaleDateString('ar-EG', { 
-                            year: 'numeric', 
-                            month: 'long', 
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                        });
-                    }
-
-                    const item = document.createElement('div');
-                    item.className = 'diary-item';
-                    item.innerHTML = `
-                        <div class="diary-header">
-                            <span class="diary-title"></span>
-                            <span class="diary-author"></span>
-                        </div>
-                        <div class="diary-date">${dateStr}</div>
-                        <div class="diary-content"></div>
-                        ${data.authorId === currentUser.uid ? `<div class="diary-actions"><button class="btn-action delete">حذف 🗑️</button></div>` : ''}
-                    `;
-
-                    item.querySelector('.diary-title').textContent = data.title;
-                    item.querySelector('.diary-author').textContent = getAuthorName(data.authorName || data.authorEmail);
-                    item.querySelector('.diary-content').textContent = data.content;
-
-                    if (data.authorId === currentUser.uid) {
-                        item.querySelector('.delete').addEventListener('click', async () => {
-                            if (confirm('هل تريد حذف هذه اليومية؟')) {
-                                await deleteDoc(doc(db, "diaries", id));
-                            }
-                        });
-                    }
-
-                    list.appendChild(item);
-                });
-            }, (error) => {
-                console.error(error);
-                document.getElementById('diariesList').innerHTML = '<div class="empty-msg">حدث خطأ أثناء تحميل اليوميات. تأكد من قواعد الأمان.</div>';
-            });
-        }
-    </script>
-</body>
-</html>
+            <div id="diariesList"><div class="empty-msg">جاري تحميل اليوميات... ⏳
