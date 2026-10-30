@@ -16,29 +16,7 @@
             --border: #ffeaa7;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
-        
-        /* تأثير القلوب والنجوم المتطايرة في الخلفية */
-        .floating-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            overflow: hidden;
-            z-index: 0;
-        }
-        .particle {
-            position: absolute;
-            bottom: -50px;
-            font-size: 1.2rem;
-            animation: floatUp 6s linear infinite;
-            opacity: 0.6;
-        }
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
-            100% { transform: translateY(-105vh) scale(1.2); opacity: 0; }
-        }
-
-        header, .container { position: relative; z-index: 1; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
         header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2); }
         .status-bar { margin-top: 10px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-logout { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; }
@@ -48,8 +26,7 @@
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--primary); }
         .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .form-group textarea { resize: vertical; height: 100px; }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
-        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
         .diary-item { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
         .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .diary-title { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
@@ -63,11 +40,9 @@
 </head>
 <body>
 
-    <!-- حاوية القلوب والنجوم المتحركة -->
-    <div class="floating-bg" id="floatingBg"></div>
-
     <header>
         <h1>B-Sunny Daily ☀️</h1>
+        <p>مساحتنا الخاصة </p>
         <div id="userInfo" class="status-bar hidden">
             <span id="userEmail"></span>
             <button class="btn-logout" id="btnLogout">تسجيل الخروج</button>
@@ -76,7 +51,7 @@
 
     <div class="container">
         <div id="loginSection" class="card login-box">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">تسجيل الدخول 🔐</h3>
+            <h3 style="color: var(--primary); margin-bottom: 15px;">تسجيل الدخول للمساحة الخاصة 🔐</h3>
             <div class="form-group"><input type="email" id="loginEmail" placeholder="البريد الإلكتروني"></div>
             <div class="form-group"><input type="password" id="loginPassword" placeholder="كلمة المرور"></div>
             <button class="btn-submit" id="btnLogin">دخول</button>
@@ -93,14 +68,107 @@
         </div>
     </div>
 
-    <!-- سكربت توليد القلوب والنجوم عشوائياً -->
-    <script>
-        const symbols = ['❤️', '✨', '🌸', '💖', '⭐', '💫'];
-        const bgContainer = document.getElementById('floatingBg');
+    <!-- Firebase SDK v10.7.1 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        function createParticle() {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-            p.style.left = Math.random() * 100 + 'vw';
-            p.style.animationDuration = (Math.random() * 3 + 4) + 's'; // تتراوح مدة الحركة بين 4 إلى
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqi9zD51Y5pQpJx1vD3Hk8qzyeyAOUhNY",
+            authDomain: "hajer-1fb43.firebaseapp.com",
+            projectId: "hajer-1fb43",
+            storageBucket: "hajer-1fb43.firebasestorage.app",
+            messagingSenderId: "258925603078",
+            appId: "1:258925603078:web:170319a22fe8bf891b9687",
+            measurementId: "G-JC3BWYY9TE"
+        };
+
+        const PEOPLE = {
+            'bkeifo@gmail.com': 'Bilal ☕',
+            'keifo259@gmail.com': 'Hajer 🌸'
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentUser = null;
+        let unsub = null;
+
+        document.getElementById('btnLogin').onclick = async () => {
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value.trim(), document.getElementById('loginPassword').value);
+            } catch (e) { alert('خطأ في البيانات: ' + e.message); }
+        };
+
+        document.getElementById('btnLogout').onclick = () => signOut(auth);
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userEmail').innerText = `أهلاً بك: ${PEOPLE[user.email] || user.email}`;
+                loadDiaries();
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('appSection').classList.add('hidden');
+                document.getElementById('userInfo').classList.add('hidden');
+                if (unsub) unsub();
+            }
+        });
+
+        document.getElementById('btnPublish').onclick = async () => {
+            const title = document.getElementById('diaryTitle').value.trim();
+            const content = document.getElementById('diaryContent').value.trim();
+            if (!title || !content) return alert('الرجاء كتابة العنوان والمحتوى');
+            try {
+                await addDoc(collection(db, "diaries"), {
+                    title, content,
+                    authorId: currentUser.uid,
+                    authorName: PEOPLE[currentUser.email] || currentUser.email,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById('diaryTitle').value = '';
+                document.getElementById('diaryContent').value = '';
+            } catch (e) { alert('تعذر النشر: ' + e.message); }
+        };
+
+        function loadDiaries() {
+            unsub = onSnapshot(query(collection(db, "diaries"), orderBy("createdAt", "desc")), (snap) => {
+                const list = document.getElementById('diariesList');
+                if (snap.empty) {
+                    list.innerHTML = '<div class="empty-msg">لا توجد يوميات بعد.. شاركنا أول يومية! ✨</div>';
+                    return;
+                }
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    const data = d.data();
+                    const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : 'الآن';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'diary-item';
+                    item.innerHTML = `
+                        <div class="diary-header"><span class="diary-title"></span><span class="diary-author"></span></div>
+                        <div class="diary-date"><span>${dateStr}</span></div>
+                        <div class="diary-content"></div>
+                        ${data.authorId === currentUser.uid ? '<div style="text-align:left; margin-top:10px;"><button class="btn-delete" style="background:none; border:none; color:#e74c3c; cursor:pointer;">حذف 🗑️</button></div>' : ''}
+                    `;
+                    item.querySelector('.diary-title').textContent = data.title;
+                    item.querySelector('.diary-author').textContent = data.authorName;
+                    item.querySelector('.diary-content').textContent = data.content;
+
+                    if (data.authorId === currentUser.uid) {
+                        item.querySelector('.btn-delete').onclick = async () => {
+                            if (confirm('حذف هذه اليومية؟')) await deleteDoc(doc(db, "diaries", d.id));
+                        };
+                    }
+                    list.appendChild(item);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
