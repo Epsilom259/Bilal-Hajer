@@ -16,7 +16,29 @@
             --border: #ffeaa7;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        
+        /* تأثير القلوب والنجوم المتطايرة في الخلفية */
+        .floating-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            bottom: -50px;
+            font-size: 1.2rem;
+            animation: floatUp 6s linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
+            100% { transform: translateY(-105vh) scale(1.2); opacity: 0; }
+        }
+
+        header, .container { position: relative; z-index: 1; }
         header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2); }
         .status-bar { margin-top: 10px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-logout { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; }
@@ -26,7 +48,8 @@
         .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--primary); }
         .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
         .form-group textarea { resize: vertical; height: 100px; }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+        .btn-submit:active { transform: scale(0.98); }
         .diary-item { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
         .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .diary-title { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
@@ -40,9 +63,11 @@
 </head>
 <body>
 
+    <!-- حاوية القلوب والنجوم المتحركة -->
+    <div class="floating-bg" id="floatingBg"></div>
+
     <header>
         <h1>B-Sunny Daily ☀️</h1>
-        <p>مساحتنا الخاصة والمشفرة لتوثيق أيامنا ونبض قلوبنا</p>
         <div id="userInfo" class="status-bar hidden">
             <span id="userEmail"></span>
             <button class="btn-logout" id="btnLogout">تسجيل الخروج</button>
@@ -51,7 +76,7 @@
 
     <div class="container">
         <div id="loginSection" class="card login-box">
-            <h3 style="color: var(--primary); margin-bottom: 15px;">تسجيل الدخول للمساحة الخاصة 🔐</h3>
+            <h3 style="color: var(--primary); margin-bottom: 15px;">تسجيل الدخول 🔐</h3>
             <div class="form-group"><input type="email" id="loginEmail" placeholder="البريد الإلكتروني"></div>
             <div class="form-group"><input type="password" id="loginPassword" placeholder="كلمة المرور"></div>
             <button class="btn-submit" id="btnLogin">دخول</button>
@@ -64,4 +89,18 @@
                 <div class="form-group"><label>المحتوى</label><textarea id="diaryContent" placeholder="اكتب تفاصيل يومك ومشاعرك هنا..."></textarea></div>
                 <button class="btn-submit" id="btnPublish">نشر اليومية 💌</button>
             </div>
-            <div id="diariesList"><div class="empty-msg">جاري تحميل اليوميات... ⏳
+            <div id="diariesList"><div class="empty-msg">جاري تحميل اليوميات... ⏳</div></div>
+        </div>
+    </div>
+
+    <!-- سكربت توليد القلوب والنجوم عشوائياً -->
+    <script>
+        const symbols = ['❤️', '✨', '🌸', '💖', '⭐', '💫'];
+        const bgContainer = document.getElementById('floatingBg');
+
+        function createParticle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 3 + 4) + 's'; // تتراوح مدة الحركة بين 4 إلى
