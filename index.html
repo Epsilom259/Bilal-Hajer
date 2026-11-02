@@ -1,456 +1,220 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0b0507">
-<title>سيدتك</title>
-<style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0}
-body{
-  background:#0b0507;color:#f0e3e8;
-  font-family:system-ui,-apple-system,"Segoe UI",Tahoma,"Noto Naskh Arabic",sans-serif;
-  display:flex;flex-direction:column;overflow:hidden;
-  background-image:radial-gradient(130% 70% at 50% -10%,#2a0d17 0%,#120709 45%,#080405 100%);
-}
-button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit;font-size:100%}
-input,textarea,select{font-family:inherit;font-size:16px}
-.hide{display:none!important}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B-Sunny Daily | يومياتنا الدافئة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff7a00;
+            --secondary: #ff9f43;
+            --bg: #fffaf5;
+            --card: #ffffff;
+            --text: #2d3436;
+            --muted: #636e72;
+            --border: #ffeaa7;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
+        body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; position: relative; overflow-x: hidden; }
+        
+        /* تأثير القلوب والنجوم المتطايرة في الخلفية */
+        .floating-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            bottom: -50px;
+            font-size: 1.2rem;
+            animation: floatUp 6s linear infinite;
+            opacity: 0.6;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0.8; }
+            100% { transform: translateY(-105vh) scale(1.2); opacity: 0; }
+        }
 
-/* ===== شاشة البداية ===== */
-#onb{position:fixed;inset:0;z-index:50;overflow-y:auto;padding:30px 20px 60px;
-  background:linear-gradient(180deg,#150810,#080405 70%)}
-#onb .wrap{max-width:520px;margin:0 auto}
-.crown{font-size:40px;text-align:center;margin-bottom:6px}
-#onb h1{font-size:26px;text-align:center;margin:0 0 6px;letter-spacing:.01em}
-#onb .sub{text-align:center;color:#a88b96;font-size:13.5px;line-height:1.9;margin:0 0 24px}
-.f{margin-bottom:14px}
-.f label{display:block;font-size:12.5px;color:#d9a53f;margin-bottom:6px}
-.f input,.f select,.f textarea{width:100%;padding:12px;background:#170c11;border:1px solid #341b25;
-  border-radius:12px;color:#f0e3e8;outline:none}
-.f textarea{min-height:70px;resize:vertical;line-height:1.8}
-.f input:focus,.f textarea:focus,.f select:focus{border-color:#a3243f}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.cta{width:100%;padding:15px;border-radius:13px;font-size:16px;font-weight:600;
-  background:linear-gradient(180deg,#b32344,#71142a);color:#fff;border:1px solid #c94363;
-  box-shadow:0 10px 30px -14px #b32344}
-.cta:active{transform:scale(.99)}
-
-/* ===== التطبيق ===== */
-#app{display:flex;flex-direction:column;height:100%;min-height:0}
-header{display:flex;align-items:center;gap:10px;padding:10px 14px;
-  background:rgba(11,5,7,.92);backdrop-filter:blur(16px);border-bottom:1px solid #26141c;
-  padding-top:calc(10px + env(safe-area-inset-top))}
-.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:18px;flex:0 0 auto;
-  background:radial-gradient(circle at 32% 28%,#d13a5c,#5c0f22 72%);border:1px solid #e06a8a;
-  box-shadow:0 0 20px -5px #d13a5c;color:#ffe8ef}
-.hi{flex:1;min-width:0}
-.hi b{display:block;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hi small{font-size:11px;color:#9d7f8b}
-.pill{font-size:10.5px;padding:4px 9px;border-radius:20px;border:1px solid #3d2412;
-  background:#1a1008;color:#d9a53f;white-space:nowrap}
-.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:16px;
-  border:1px solid #2b1721;background:#150c11;color:#b79aa5}
-
-#log{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 12px 6px;display:flex;flex-direction:column;gap:9px;
-  scroll-behavior:smooth;overscroll-behavior:contain}
-.row{display:flex;gap:8px;align-items:flex-end;max-width:100%}
-.row.me{flex-direction:row-reverse}
-.mini{width:26px;height:26px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-size:12px;
-  background:#2a1119;border:1px solid #4a2130;color:#eaa9bd;margin-bottom:2px}
-.b{max-width:calc(100% - 42px);padding:11px 14px;border-radius:16px;font-size:15px;line-height:1.95;
-  white-space:pre-wrap;word-break:break-word;animation:pop .22s ease both}
-@keyframes pop{from{opacity:0;transform:translateY(6px) scale(.985)}to{opacity:1;transform:none}}
-.b.m{background:linear-gradient(180deg,#231019,#1a0a11);border:1px solid #3d1c29;
-  border-bottom-right-radius:5px}
-.b.u{background:#10201d;border:1px solid #1e3d37;border-bottom-left-radius:5px;color:#d3ece5}
-.b.sys{align-self:center;max-width:92%;text-align:center;font-size:12px;color:#9d7f8b;
-  background:#130a0e;border:1px dashed #33202a;border-radius:12px}
-.tm{font-size:10px;color:#6b525c;margin-top:6px;display:block}
-.acts{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
-.acts button{font-size:12.5px;padding:7px 12px;border-radius:9px;border:1px solid #3d1c29;
-  background:#2a1119;color:#ecc6d2}
-.acts button.ok{border-color:#2d6b52;background:#0f2419;color:#8fe3b8}
-.acts button.no{border-color:#7a2338;background:#2a0f18;color:#ffb0c3}
-.b.dim{opacity:.55}
-.b.dim .txt{text-decoration:line-through;text-decoration-color:#7a2338}
-.typing{display:flex;gap:4px;padding:14px}
-.typing i{width:7px;height:7px;border-radius:50%;background:#a8889a;animation:bl 1.1s infinite}
-.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
-@keyframes bl{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
-
-#dock{padding:8px 12px calc(10px + env(safe-area-inset-bottom));
-  background:rgba(11,5,7,.96);border-top:1px solid #26141c;backdrop-filter:blur(16px)}
-.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chips button{font-size:12px;padding:7px 12px;border-radius:20px;white-space:nowrap;
-  border:1px solid #33202a;background:#160c11;color:#cbb0bb}
-.chips button.hot{border-color:#7a2338;background:#2a0f18;color:#ffd9e3}
-.bar{display:flex;gap:8px;align-items:flex-end}
-#tx{flex:1;padding:12px 14px;border-radius:20px;background:#170c11;border:1px solid #33202a;
-  color:#f0e3e8;resize:none;max-height:110px;line-height:1.6;outline:none}
-#tx:focus{border-color:#a3243f}
-#snd{width:44px;height:44px;border-radius:50%;flex:0 0 auto;display:grid;place-items:center;font-size:17px;
-  background:linear-gradient(180deg,#b32344,#71142a);border:1px solid #c94363;color:#fff}
-
-/* ===== ورقة الإعدادات ===== */
-#sheet{position:fixed;inset:0;z-index:60;background:rgba(4,2,3,.7);display:none}
-#sheet.on{display:block}
-#sheet .in{position:absolute;inset:0 0 0 0;overflow-y:auto;background:#0f0709;
-  padding:20px 18px 70px;max-width:560px;margin:0 auto;border-inline:1px solid #26141c}
-#sheet h2{font-size:17px;margin:0 0 4px}
-#sheet .hint{font-size:12px;color:#9d7f8b;line-height:1.8;margin:0 0 18px}
-#sheet .sec{font-size:12px;color:#d9a53f;margin:20px 0 8px;letter-spacing:.04em}
-.gh{width:100%;padding:12px;border-radius:11px;border:1px solid #33202a;background:#160c11;
-  color:#cbb0bb;font-size:14px;margin-bottom:8px}
-.gh.warn{border-color:#7a2338;color:#ffb0c3}
-.done-x{position:sticky;top:0;float:left;font-size:20px;color:#9d7f8b}
-.foot{text-align:center;font-size:10.5px;color:#5b4550;padding:10px 0 4px}
-</style>
+        header, .container { position: relative; z-index: 1; }
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 20px; text-align: center; box-shadow: 0 4px 15px rgba(255, 122, 0, 0.2); }
+        .status-bar { margin-top: 10px; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-logout { background: rgba(255, 255, 255, 0.2); border: 1px solid white; color: white; padding: 3px 10px; border-radius: 12px; cursor: pointer; font-size: 0.8rem; }
+        .container { max-width: 600px; margin: 20px auto; padding: 0 15px; flex: 1; width: 100%; }
+        .card { background: var(--card); border-radius: 15px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid var(--border); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: var(--primary); }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; }
+        .form-group textarea { resize: vertical; height: 100px; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 12px; width: 100%; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: transform 0.2s; }
+        .btn-submit:active { transform: scale(0.98); }
+        .diary-item { background: #fff; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--border); }
+        .diary-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .diary-title { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
+        .diary-author { font-size: 0.8rem; background: #fff3e0; padding: 3px 10px; border-radius: 12px; color: #d35400; }
+        .diary-date { font-size: 0.75rem; color: var(--muted); margin-bottom: 10px; }
+        .diary-content { line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+        .login-box { text-align: center; max-width: 400px; margin: 40px auto; }
+        .hidden { display: none !important; }
+        .empty-msg { text-align: center; color: var(--muted); padding: 30px; }
+    </style>
 </head>
 <body>
 
-<!-- ===== البداية ===== -->
-<section id="onb">
-  <div class="wrap">
-    <div class="crown">♛</div>
-    <h1>سيدتك</h1>
-    <p class="sub">عقد انضباط ذكي. سيّدتُك تدير وقتك، تتفاعل مع كلامك العامي، لا ترحم تقصيرك، وتعاملُك كذكر مطيع.</p>
-    <div class="f"><label>اسمك</label><input id="fName" placeholder="كما ستُنادى" autocomplete="off"></div>
-    <div class="f"><label>مفتاح API الخاص بـ Gemini (اختياري للذكاء الاصطناعي)</label><input id="fApiKey" type="password" placeholder="AI Key..."></div>
-    <div class="g2">
-      <div class="f"><label>القسوة</label><select id="fHarsh">
-        <option value="1">هادئة</option><option value="2" selected>متوسطة</option><option value="3">قاسية جداً</option>
-      </select></div>
-      <div class="f"><label>خبرتك</label><select id="fExp">
-        <option value="1">مبتدئ</option><option value="2" selected>لدي خبرة</option><option value="3">متمرس</option>
-      </select></div>
+    <!-- حاوية القلوب والنجوم المتحركة -->
+    <div class="floating-bg" id="floatingBg"></div>
+
+    <header>
+        <h1>B-Sunny Daily ☀️</h1>
+        <div id="userInfo" class="status-bar hidden">
+            <span id="userEmail"></span>
+            <button class="btn-logout" id="btnLogout">تسجيل الخروج</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="loginSection" class="card login-box">
+            <h3 style="color: var(--primary); margin-bottom: 15px;">تسجيل الدخول 🔐</h3>
+            <div class="form-group"><input type="email" id="loginEmail" placeholder="البريد الإلكتروني"></div>
+            <div class="form-group"><input type="password" id="loginPassword" placeholder="كلمة المرور"></div>
+            <button class="btn-submit" id="btnLogin">دخول</button>
+        </div>
+
+        <div id="appSection" class="hidden">
+            <div class="card">
+                <h3>اكتب يومياتك اليوم ✍️</h3>
+                <div class="form-group"><label>العنوان</label><input type="text" id="diaryTitle" placeholder="عنوان اليومية..."></div>
+                <div class="form-group"><label>المحتوى</label><textarea id="diaryContent" placeholder="اكتب تفاصيل يومك ومشاعرك هنا..."></textarea></div>
+                <button class="btn-submit" id="btnPublish">نشر اليومية 💌</button>
+            </div>
+            <div id="diariesList"><div class="empty-msg">جاري تحميل اليوميات... ⏳</div></div>
+        </div>
     </div>
-    <div class="g2">
-      <div class="f"><label>الاستيقاظ</label><input id="fWake" type="time" value="07:00"></div>
-      <div class="f"><label>النوم</label><input id="fBed" type="time" value="23:30"></div>
-    </div>
-    <div class="f"><label>حدودك (الخطوط الحمراء)</label><textarea id="fLimits" placeholder="ما لا تريده إطلاقاً..."></textarea></div>
-    <div class="f"><label>كلمة الأمان</label><input id="fSafe" value="توقف"></div>
-    <button class="cta" id="go">وقّع العقد</button>
-    <p class="foot">كل شيء محلي في جهازك. بياناتك بأمان.</p>
-  </div>
-</section>
 
-<!-- ===== التطبيق ===== -->
-<div id="app" class="hide">
-  <header>
-    <div class="av">♛</div>
-    <div class="hi"><b id="hn">سيدتك</b><small id="hs">متصل</small></div>
-    <div class="pill" id="hl">مستوى 1</div>
-    <button class="ico" id="btnSet">⚙</button>
-  </header>
-  <div id="log"></div>
-  <div id="dock">
-    <div class="chips">
-      <button data-a="task" class="hot">مريني بشيء</button>
-      <button data-a="report">تقريري</button>
-      <button data-a="confess">اعتراف</button>
-      <button data-a="punish">عاقبني</button>
-      <button data-a="rules">القواعد</button>
-      <button data-a="stats">حالي</button>
-    </div>
-    <div class="bar">
-      <textarea id="tx" rows="1" placeholder="اكتب لها بكل صراحة..."></textarea>
-      <button id="snd">➤</button>
-    </div>
-  </div>
-</div>
+    <!-- سكربت توليد القلوب والنجوم عشوائياً -->
+    <script>
+        const symbols = ['❤️', '✨', '🌸', '💖', '⭐', '💫'];
+        const bgContainer = document.getElementById('floatingBg');
 
-<!-- ===== الإعدادات ===== -->
-<div id="sheet"><div class="in">
-  <button class="done-x" id="clsSheet">✕</button>
-  <h2>الإعدادات</h2>
-  <p class="hint">تُحفظ فوراً في جهازك.</p>
-  <div class="f"><label>الاسم</label><input id="sName"></div>
-  <div class="f"><label>مفتاح Gemini API (للذكاء الاصطناعي)</label><input id="sApiKey" type="password"></div>
-  <div class="f"><label>كلمة الأمان</label><input id="sSafe"></div>
-  <div class="f"><label>الحدود</label><textarea id="sLimits"></textarea></div>
-  <div class="g2">
-    <div class="f"><label>القسوة</label><select id="sHarsh">
-      <option value="1">هادئة</option><option value="2">متوسطة</option><option value="3">قاسية</option></select></div>
-    <div class="f"><label>النوم</label><input id="sBed" type="time"></div>
-  </div>
-  <button class="cta" id="sSave">حفظ</button>
-  <div class="sec">البيانات</div>
-  <button class="gh" id="sExp">تصدير نسخة احتياطية</button>
-  <button class="gh" id="sImp">استيراد نسخة</button>
-  <button class="gh warn" id="sRst">مسح كل شيء</button>
-  <input type="file" id="sFile" accept="application/json" class="hide">
-  <p class="foot">سيدتك الذكية · الإصدار 3.1</p>
-</div></div>
+        function createParticle() {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.animationDuration = (Math.random() * 3 + 4) + 's'; // تتراوح مدة الحركة بين 4 إلى 7 ثواني
+            bgContainer.appendChild(p);
 
-<script>
-(function(){
-"use strict";
-var K="mistress.v3";
-var $=function(s){return document.querySelector(s);};
-var log=$("#log"), tx=$("#tx");
-var rnd=function(a){return a[Math.floor(Math.random()*a.length)];};
-var sleep=function(ms){return new Promise(function(r){setTimeout(r,ms);});};
-var cl=function(v,a,b){return Math.max(a,Math.min(b,v));};
-var uid=function(){return Math.random().toString(36).slice(2,9);};
-var day=function(){return new Date().toISOString().slice(0,10);};
-var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];});};
+            setTimeout(() => {
+                p.remove();
+            }, 7000);
+        }
 
-var S=null;
+        setInterval(createParticle, 600); // إظهار رمز جديد كل 0.6 ثانية
+    </script>
 
-function blank(){
-  return {v:3,p:{name:"",apiKey:"",harsh:2,exp:2,wake:"07:00",bed:"23:30",limits:"",safe:"توقف"},
-    lvl:1,score:0,streak:0,best:0,
-    today:{d:null,done:0,fail:0,quota:3},
-    tasks:[],puns:[],plog:[],log:[],
-    mem:{notes:[],facts:[]},paused:false,lastActive:Date.now()};
-}
-function save(){ try{ localStorage.setItem(K,JSON.stringify(S)); }catch(e){} }
-function load(){ try{ var r=localStorage.getItem(K); return r?JSON.parse(r):null; }catch(e){ return null; } }
+    <!-- Firebase SDK v10.7.1 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-/* ================= الذكاء الاصطناعي (Gemini API Integration) ================= */
-async function fetchAIResponse(userText, type="chat") {
-  if (!S.p.apiKey) return null;
+        const firebaseConfig = {
+            apiKey: "AIzaSyDqi9zD51Y5pQpJx1vD3Hk8qzyeyAOUhNY",
+            authDomain: "hajer-1fb43.firebaseapp.com",
+            projectId: "hajer-1fb43",
+            storageBucket: "hajer-1fb43.firebasestorage.app",
+            messagingSenderId: "258925603078",
+            appId: "1:258925603078:web:170319a22fe8bf891b9687",
+            measurementId: "G-JC3BWYY9TE"
+        };
 
-  var systemPrompt = `أنتِ تمثلين شخصية "السيدة" (Mistress) المسيطرة والمهيمنة في تطبيق لتنظيم الانضباط الذاتي.
-المستخدم هو رجل مطيع يدعى: "${S.p.name}".
-مستوى قسوتك المطلوب: ${S.p.harsh == 3 ? "قاسية جداً وصارمة وبلا تهاون" : S.p.harsh == 2 ? "متوسطة وحازمة" : "هادئة وصارمة في توجيهاته"}.
-حدوده وشروطه الخاصة: "${S.p.limits || 'لا يوجد'}".
-مستواه الحالي في الانضباط: ${S.lvl}.
+        const PEOPLE = {
+            'bkeifo@gmail.com': 'Bilal ☕',
+            'keifo259@gmail.com': 'Hajer 🌸'
+        };
 
-تعليمات الأسلوب:
-1. خاطبيه **دائماً بصيغة المذكر** (مثال: أنت مطيع، يا رجل، يا فتى، قُم، اركع، أنجز، افعل ما أقوله لك).
-2. تحدثي بصيغة المؤنث عن نفسك كـ "سيّدة" (مثال: أنا أمرك، لا أقبل بأعذارك، ستفعل ما أقوله).
-3. افهمي كلامه العامي بأي لهجة عربية، واستخرجي مغزاه وردّي عليه بفرض السيطرة والهيمنة التامة.
-4. كوني حازمة، صارمة، ولا تقبلي الأعذار الواهية.
-5. حافظي على الإيجاز وقوة العبارات.
-${type === 'task' ? 'المطلوب منك الآن: إعطاؤه أمراً عملياً أو طقساً انضباطياً صارماً بالدقائق ومناسباً لمستواه بصيغة المذكر.' : ''}
-${type === 'punish' ? 'المطلوب منك الآن: فرض عقاب صارم ومحدد ومناسب لتقليله أو تقصيره، يهدف لإعادة ضبطه.' : ''}`;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-  var messages = [
-    { role: "user", parts: [{ text: systemPrompt }] },
-    { role: "model", parts: [{ text: "فهمت. أنا سيدتك، وسأتعامل معك بحزم وانضباط تام كامرأة مسيطرة وأنت الرجل المطيع لدي." }] }
-  ];
+        let currentUser = null;
+        let unsub = null;
 
-  var recentLog = S.log.slice(-10);
-  recentLog.forEach(function(m){
-    if (m.r === "u") messages.push({ role: "user", parts: [{ text: m.t }] });
-    else if (m.r === "m") messages.push({ role: "model", parts: [{ text: m.t }] });
-  });
+        document.getElementById('btnLogin').onclick = async () => {
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value.trim(), document.getElementById('loginPassword').value);
+            } catch (e) { alert('خطأ في البيانات: ' + e.message); }
+        };
 
-  if (userText) messages.push({ role: "user", parts: [{ text: userText }] });
+        document.getElementById('btnLogout').onclick = () => signOut(auth);
 
-  try {
-    var url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + S.p.apiKey;
-    var res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: messages })
-    });
-    var data = await res.json();
-    if (data.candidates && data.candidates[0].content.parts[0].text) {
-      return data.candidates[0].content.parts[0].text.trim();
-    }
-  } catch (e) {
-    console.error("AI Error:", e);
-  }
-  return null;
-}
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('loginSection').classList.add('hidden');
+                document.getElementById('appSection').classList.remove('hidden');
+                document.getElementById('userInfo').classList.remove('hidden');
+                document.getElementById('userEmail').innerText = `أهلاً بك: ${PEOPLE[user.email] || user.email}`;
+                loadDiaries();
+            } else {
+                document.getElementById('loginSection').classList.remove('hidden');
+                document.getElementById('appSection').classList.add('hidden');
+                document.getElementById('userInfo').classList.add('hidden');
+                if (unsub) unsub();
+            }
+        });
 
-/* ================= النصوص الاحتياطية (Fallback) ================= */
-var P_FALLBACK = [
-  "قِف في الزاوية ووجهك للحائط ويداك خلف ظهرك، 10 دقائق.",
-  "اكتب 10 مرات: «التأخير إهانة وانعدام انضباط أمام سيدتي».",
-  "امشِ بظهر مستقيم 15 دورة في الغرفة بلا هاتف.",
-  "اركع على الأرض وانتظر 5 دقائق بلا حركة أو كلام."
-];
+        document.getElementById('btnPublish').onclick = async () => {
+            const title = document.getElementById('diaryTitle').value.trim();
+            const content = document.getElementById('diaryContent').value.trim();
+            if (!title || !content) return alert('الرجاء كتابة العنوان والمحتوى');
+            try {
+                await addDoc(collection(db, "diaries"), {
+                    title, content,
+                    authorId: currentUser.uid,
+                    authorName: PEOPLE[currentUser.email] || currentUser.email,
+                    createdAt: serverTimestamp()
+                });
+                document.getElementById('diaryTitle').value = '';
+                document.getElementById('diaryContent').value = '';
+            } catch (e) { alert('تعذر النشر: ' + e.message); }
+        };
 
-/* ================= العرض والواجهة ================= */
-function render(){
-  var frag="";
-  S.log.slice(-140).forEach(function(m){
-    if(m.r==="sys"){ frag+='<div class="b sys">'+esc(m.t)+'</div>'; return; }
-    var mine=m.r==="u";
-    frag+='<div class="row'+(mine?" me":"")+'">';
-    if(!mine) frag+='<div class="mini">♛</div>';
-    frag+='<div class="b '+(mine?"u":"m")+(m.dim?" dim":"")+'">'+'<span class="txt">'+esc(m.t)+'</span>';
-    if(m.kind==="task"&&m.tid){
-      var tk=findTask(m.tid);
-      if(tk&&tk.state==="open"){
-        frag+='<div class="acts"><button class="ok" data-ok="'+m.tid+'">✓ أنجزت</button><button class="no" data-no="'+m.tid+'">✗ فشلت</button></div>';
-      }
-    }
-    if(m.kind==="pun"&&m.pid){
-      var pp=findPun(m.pid);
-      if(pp&&pp.state==="open") frag+='<div class="acts"><button class="ok" data-pd="'+m.pid+'">نُفِّذ</button></div>';
-    }
-    frag+='<span class="tm">'+new Date(m.ts).toLocaleTimeString("ar-EG",{hour:"2-digit",minute:"2-digit"})+'</span></div></div>';
-  });
-  log.innerHTML=frag;
-  log.scrollTop=log.scrollHeight;
-}
+        function loadDiaries() {
+            unsub = onSnapshot(query(collection(db, "diaries"), orderBy("createdAt", "desc")), (snap) => {
+                const list = document.getElementById('diariesList');
+                if (snap.empty) {
+                    list.innerHTML = '<div class="empty-msg">لا توجد يوميات بعد.. شاركنا أول يومية! ✨</div>';
+                    return;
+                }
+                list.innerHTML = '';
+                snap.forEach(d => {
+                    const data = d.data();
+                    const dateStr = data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : 'الآن';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'diary-item';
+                    item.innerHTML = `
+                        <div class="diary-header"><span class="diary-title"></span><span class="diary-author"></span></div>
+                        <div class="diary-date"><span>${dateStr}</span></div>
+                        <div class="diary-content"></div>
+                        ${data.authorId === currentUser.uid ? '<div style="text-align:left; margin-top:10px;"><button class="btn-delete" style="background:none; border:none; color:#e74c3c; cursor:pointer;">حذف 🗑️</button></div>' : ''}
+                    `;
+                    item.querySelector('.diary-title').textContent = data.title;
+                    item.querySelector('.diary-author').textContent = data.authorName;
+                    item.querySelector('.diary-content').textContent = data.content;
 
-function push(r,t,extra){
-  var m={r:r,t:t,ts:Date.now()};
-  if(extra) for(var k in extra) m[k]=extra[k];
-  S.log.push(m);
-  if(S.log.length>240) S.log=S.log.slice(-240);
-  save(); render();
-  return m;
-}
-
-function sys(t){ push("sys",t); }
-
-async function say(t,extra){
-  if(!t) return;
-  var box=document.createElement("div");
-  box.className="row";
-  box.innerHTML='<div class="mini">♛</div><div class="b m typing"><i></i><i></i><i></i></div>';
-  log.appendChild(box); log.scrollTop=log.scrollHeight;
-  await sleep(280+Math.min(1000,t.length*8));
-  box.remove();
-  push("m",t,extra);
-}
-
-var findTask=function(id){ for(var i=0;i<S.tasks.length;i++) if(S.tasks[i].id===id) return S.tasks[i]; return null; };
-var findPun=function(id){ for(var i=0;i<S.puns.length;i++) if(S.puns[i].id===id) return S.puns[i]; return null; };
-
-function head(){
-  $("#hn").textContent=S.p.name?"سيدتك · "+S.p.name:"سيدتك";
-  $("#hl").textContent="مستوى "+S.lvl;
-  $("#hs").textContent=S.paused?"موقوف بكلمة الأمان":"طاعة "+S.score+" · سلسلة "+S.streak+" · اليوم "+S.today.done+"/"+S.today.quota;
-}
-
-/* ================= المحرك والوظائف ================= */
-async function giveTask(){
-  if(S.paused){ return say("التنفيذ موقوف. انطق كلمة الأمان للعودة."); }
-  
-  var aiTaskText = await fetchAIResponse("أعطني أمراً أو مهمة انضباطية الآن بصيغة المذكر.", "task");
-  var taskText = aiTaskText || "قم بأداء 20 تمرين ضغط الآن ولا تتذمر، ثم أبلغني فورا.";
-  
-  var task={id:uid(),text:taskText,due:Date.now()+15*60000,state:"open"};
-  S.tasks.push(task); save();
-  await say("〔أمر من سيدتك〕\n"+task.text,{kind:"task",tid:task.id});
-  head();
-}
-
-async function doTask(id){
-  var t=findTask(id); if(!t||t.state!=="open") return;
-  t.state="done"; t.doneAt=Date.now();
-  S.score+=2; S.today.done++;
-  head(); render();
-  
-  var aiResponse = await fetchAIResponse("لقد أنجزت المهمة المطلوبة مني يا سيدتي بنجاح.");
-  await say(aiResponse || "جيد. تقبّلت إنجازك، لا تتراخَ وتوقّع المزيد مني.");
-  save();
-}
-
-async function missTask(id){
-  var t=findTask(id); if(!t||t.state!=="open") return;
-  t.state="fail"; t.failAt=Date.now();
-  S.score=Math.max(0,S.score-2); S.today.fail++;
-  head(); render();
-  
-  var aiResponse = await fetchAIResponse("لقد فشلت في تنفيذ المهمة التي أمرتني بها يا سيدتي.");
-  await say(aiResponse || "تقصير غير مقبول منك. ستتحمل عقوبة إهمالك الآن.");
-  await punish();
-  save();
-}
-
-async function punish(){
-  var aiPunishText = await fetchAIResponse("أحتاج عقاباً حازماً وصارماً بسبب تقصيره.", "punish");
-  var txt = aiPunishText || rnd(P_FALLBACK);
-  
-  var pun={id:uid(),text:txt,state:"open",ts:Date.now()};
-  S.puns.push(pun); S.plog.unshift({t:txt,ts:Date.now()});
-  await say("〔عقاب من سيدتك〕:\n"+txt,{kind:"pun",pid:pun.id});
-  save();
-}
-
-async function reply(txt){
-  if(txt.trim()===S.p.safe.trim()){
-    S.paused=!S.paused; head();
-    return say(S.paused?"توقف كامل. تم تفعيل كلمة الأمان. لن تصدر أي أوامر حتى تلغي التوقف بنفسك.":"عدنا. الانضباط تحت إمرتي لا يتوقف.");
-  }
-  
-  var aiResponse = await fetchAIResponse(txt);
-  if (aiResponse) {
-    await say(aiResponse);
-  } else {
-    await say("سمعتك يا "+S.p.name+". نفّذ ما أمرتك به ولا تضيّع وقتي في الكلام الفارغ.");
-  }
-}
-
-/* ================= إعدادات وإقلاع ================= */
-function openSheet(){
-  $("#sName").value=S.p.name; $("#sApiKey").value=S.p.apiKey||""; $("#sSafe").value=S.p.safe; $("#sLimits").value=S.p.limits;
-  $("#sHarsh").value=S.p.harsh; $("#sBed").value=S.p.bed;
-  $("#sheet").classList.add("on");
-}
-
-function boot(){
-  $("#onb").classList.add("hide");
-  $("#app").classList.remove("hide");
-  render(); head();
-  if(!S.log.length) {
-    say("أهلاً بك يا "+S.p.name+". أنا سيدتك من هذه اللحظة. وقتك، انضباطك، وحركتك تحت طاعتي وأوامري. هل أنت جاهز؟");
-  }
-}
-
-/* ================= الأحداث ================= */
-$("#go").onclick=function(){
-  var nm=$("#fName").value.trim();
-  if(!nm){ $("#fName").focus(); return; }
-  S=blank();
-  S.p.name=nm; S.p.apiKey=$("#fApiKey").value.trim(); S.p.harsh=+$("#fHarsh").value; S.p.exp=+$("#fExp").value;
-  S.p.wake=$("#fWake").value; S.p.bed=$("#fBed").value;
-  S.p.limits=$("#fLimits").value.trim(); S.p.safe=$("#fSafe").value.trim()||"توقف";
-  save(); boot();
-};
-
-$("#snd").onclick=function(){
-  var v=tx.value.trim(); if(!v) return;
-  tx.value=""; push("u",v); reply(v);
-};
-
-tx.onkeydown=function(e){ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); $("#snd").click(); } };
-
-document.addEventListener("click",function(e){
-  var b=e.target.closest("button"); if(!b) return;
-  if(b.dataset.ok){ doTask(b.dataset.ok); return; }
-  if(b.dataset.no){ missTask(b.dataset.no); return; }
-  if(b.dataset.pd){
-    var p=findPun(b.dataset.pd);
-    if(p&&p.state==="open"){ p.state="done"; S.score+=2; head(); render(); say("تم تنفيذ العقاب تحت عيني. استمر على طاعتك."); save(); }
-    return;
-  }
-  var a=b.dataset.a;
-  if(a==="task"){ push("u","مريني بشيء."); giveTask(); }
-  if(a==="report"){ push("u","تقريري اليومي."); reply("أريد تقريراً مختصراً ومباشراً عما أنجزته وما قصرت فيه اليوم يا فتى."); }
-  if(a==="confess"){ push("u","عندي اعتراف."); reply("تحدث بصراحة تامة وتذكر أن الصدق هو أقل ما أطلبه منك."); }
-  if(a==="punish"){ push("u","عاقبني."); punish(); }
-  if(a==="rules"){ push("u","القواعد."); say("1. التنفيذ الفوري لأوامري دون نقاش.\n2. ممنوع الأعذار الواهية.\n3. الالتزام المطلق بحدودك ومواعيدك."); }
-  if(a==="stats"){ push("u","وضعي الحالي."); say("نقاط طاعتك لي: "+S.score+"\nمستواك: "+S.lvl+"\nسلسلة التزامك: "+S.streak+" أيام"); }
-});
-
-$("#btnSet").onclick=openSheet;
-$("#clsSheet").onclick=function(){ $("#sheet").classList.remove("on"); };
-$("#sSave").onclick=function(){
-  S.p.name=$("#sName").value.trim();
-  S.p.apiKey=$("#sApiKey").value.trim();
-  S.p.safe=$("#sSafe").value.trim();
-  S.p.limits=$("#sLimits").value.trim();
-  S.p.harsh=+$("#sHarsh").value;
-  S.p.bed=$("#sBed").value;
-  save(); head(); $("#sheet").classList.remove("on");
-};
-
-var loaded=load();
-if(loaded){ S=loaded; boot(); }
-})();
-</script>
+                    if (data.authorId === currentUser.uid) {
+                        item.querySelector('.btn-delete').onclick = async () => {
+                            if (confirm('حذف هذه اليومية؟')) await deleteDoc(doc(db, "diaries", d.id));
+                        };
+                    }
+                    list.appendChild(item);
+                });
+            });
+        }
+    </script>
 </body>
 </html>
