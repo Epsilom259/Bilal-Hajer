@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0507">
-<title>سيدك</title>
+<title>سيدتك</title>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;margin:0}
@@ -115,13 +115,13 @@ header{display:flex;align-items:center;gap:10px;padding:10px 14px;
 <section id="onb">
   <div class="wrap">
     <div class="crown">♛</div>
-    <h1>سيدك</h1>
-    <p class="sub">عقد انضباط يدعمه الذكاء الاصطناعي. يتعلّم منك، يحلل كلامك العامي، لا يرحم تقصيرك، ويتعامل معك كـ رجل مطيع.</p>
+    <h1>سيدتك</h1>
+    <p class="sub">عقد انضباط ذكي. سيّدتُك تدير وقتك، تتفاعل مع كلامك العامي، لا ترحم تقصيرك، وتعاملُك كذكر مطيع.</p>
     <div class="f"><label>اسمك</label><input id="fName" placeholder="كما ستُنادى" autocomplete="off"></div>
     <div class="f"><label>مفتاح API الخاص بـ Gemini (اختياري للذكاء الاصطناعي)</label><input id="fApiKey" type="password" placeholder="AI Key..."></div>
     <div class="g2">
       <div class="f"><label>القسوة</label><select id="fHarsh">
-        <option value="1">هادئ</option><option value="2" selected>متوسط</option><option value="3">قاسٍ جداً</option>
+        <option value="1">هادئة</option><option value="2" selected>متوسطة</option><option value="3">قاسية جداً</option>
       </select></div>
       <div class="f"><label>خبرتك</label><select id="fExp">
         <option value="1">مبتدئ</option><option value="2" selected>لدي خبرة</option><option value="3">متمرس</option>
@@ -142,14 +142,14 @@ header{display:flex;align-items:center;gap:10px;padding:10px 14px;
 <div id="app" class="hide">
   <header>
     <div class="av">♛</div>
-    <div class="hi"><b id="hn">سيدك</b><small id="hs">متصل</small></div>
+    <div class="hi"><b id="hn">سيدتك</b><small id="hs">متصل</small></div>
     <div class="pill" id="hl">مستوى 1</div>
     <button class="ico" id="btnSet">⚙</button>
   </header>
   <div id="log"></div>
   <div id="dock">
     <div class="chips">
-      <button data-a="task" class="hot">أمرني بشيء</button>
+      <button data-a="task" class="hot">مريني بشيء</button>
       <button data-a="report">تقريري</button>
       <button data-a="confess">اعتراف</button>
       <button data-a="punish">عاقبني</button>
@@ -157,7 +157,7 @@ header{display:flex;align-items:center;gap:10px;padding:10px 14px;
       <button data-a="stats">حالي</button>
     </div>
     <div class="bar">
-      <textarea id="tx" rows="1" placeholder="اكتب له بكل صراحة..."></textarea>
+      <textarea id="tx" rows="1" placeholder="اكتب لها بكل صراحة..."></textarea>
       <button id="snd">➤</button>
     </div>
   </div>
@@ -174,7 +174,7 @@ header{display:flex;align-items:center;gap:10px;padding:10px 14px;
   <div class="f"><label>الحدود</label><textarea id="sLimits"></textarea></div>
   <div class="g2">
     <div class="f"><label>القسوة</label><select id="sHarsh">
-      <option value="1">هادئ</option><option value="2">متوسط</option><option value="3">قاسٍ</option></select></div>
+      <option value="1">هادئة</option><option value="2">متوسطة</option><option value="3">قاسية</option></select></div>
     <div class="f"><label>النوم</label><input id="sBed" type="time"></div>
   </div>
   <button class="cta" id="sSave">حفظ</button>
@@ -183,13 +183,13 @@ header{display:flex;align-items:center;gap:10px;padding:10px 14px;
   <button class="gh" id="sImp">استيراد نسخة</button>
   <button class="gh warn" id="sRst">مسح كل شيء</button>
   <input type="file" id="sFile" accept="application/json" class="hide">
-  <p class="foot">سيدك الذكي · الإصدار 3.0</p>
+  <p class="foot">سيدتك الذكية · الإصدار 3.1</p>
 </div></div>
 
 <script>
 (function(){
 "use strict";
-var K="master.v3";
+var K="mistress.v3";
 var $=function(s){return document.querySelector(s);};
 var log=$("#log"), tx=$("#tx");
 var rnd=function(a){return a[Math.floor(Math.random()*a.length)];};
@@ -215,26 +215,26 @@ function load(){ try{ var r=localStorage.getItem(K); return r?JSON.parse(r):null
 async function fetchAIResponse(userText, type="chat") {
   if (!S.p.apiKey) return null;
 
-  var systemPrompt = `أنت تمثل شخصية "سيدك" و"المسيطر" في تطبيق لتنظيم الانضباط الذاتي.
-المستخدم هو رجل يدعى: "${S.p.name}".
-مستوى القسوة المطلوب: ${S.p.harsh == 3 ? "قاسٍ جداً وبلا رحمة" : S.p.harsh == 2 ? "متوسط وصارم" : "هادئ وموجه"}.
+  var systemPrompt = `أنتِ تمثلين شخصية "السيدة" (Mistress) المسيطرة والمهيمنة في تطبيق لتنظيم الانضباط الذاتي.
+المستخدم هو رجل مطيع يدعى: "${S.p.name}".
+مستوى قسوتك المطلوب: ${S.p.harsh == 3 ? "قاسية جداً وصارمة وبلا تهاون" : S.p.harsh == 2 ? "متوسطة وحازمة" : "هادئة وصارمة في توجيهاته"}.
 حدوده وشروطه الخاصة: "${S.p.limits || 'لا يوجد'}".
 مستواه الحالي في الانضباط: ${S.lvl}.
 
 تعليمات الأسلوب:
-1. خاطبه **دائماً كذَكَر** (استخدم صيغة المذكر مثل: أنت، قُم، اركع، نفّذ، يا رجل، يا فتى، مطيع).
-2. افهم كلامه العامي بأي لهجة عربية، واستخرج مغزاه ورد عليه بذوق السيطرة والانضباط.
-3. كن حازماً، صارماً، ولا تقبل الأعذار الواهية.
-4. حافظ على الإيجاز وقوة العبارات (بدون إطالة مملة).
-${type === 'task' ? 'المطلوب منك الآن: إعطاؤه أمر عملي أو طقس انضباطي محدد بالدقائق ومناسب لمستواه.' : ''}
-${type === 'punish' ? 'المطلوب منك الآن: فرض عقاب محدد وواضح ومناسب لتقصيره، يهدف لضبط النفس والالتزام.' : ''}`;
+1. خاطبيه **دائماً بصيغة المذكر** (مثال: أنت مطيع، يا رجل، يا فتى، قُم، اركع، أنجز، افعل ما أقوله لك).
+2. تحدثي بصيغة المؤنث عن نفسك كـ "سيّدة" (مثال: أنا أمرك، لا أقبل بأعذارك، ستفعل ما أقوله).
+3. افهمي كلامه العامي بأي لهجة عربية، واستخرجي مغزاه وردّي عليه بفرض السيطرة والهيمنة التامة.
+4. كوني حازمة، صارمة، ولا تقبلي الأعذار الواهية.
+5. حافظي على الإيجاز وقوة العبارات.
+${type === 'task' ? 'المطلوب منك الآن: إعطاؤه أمراً عملياً أو طقساً انضباطياً صارماً بالدقائق ومناسباً لمستواه بصيغة المذكر.' : ''}
+${type === 'punish' ? 'المطلوب منك الآن: فرض عقاب صارم ومحدد ومناسب لتقليله أو تقصيره، يهدف لإعادة ضبطه.' : ''}`;
 
   var messages = [
     { role: "user", parts: [{ text: systemPrompt }] },
-    { role: "model", parts: [{ text: "فهمت. أنا سيدك، وسأتعامل معك بحزم وانضباط تام كذَكَر." }] }
+    { role: "model", parts: [{ text: "فهمت. أنا سيدتك، وسأتعامل معك بحزم وانضباط تام كامرأة مسيطرة وأنت الرجل المطيع لدي." }] }
   ];
 
-  // إرسال جزء من تاريخ المحادثة للذكاء الاصطناعي ليحصل على السياق
   var recentLog = S.log.slice(-10);
   recentLog.forEach(function(m){
     if (m.r === "u") messages.push({ role: "user", parts: [{ text: m.t }] });
@@ -262,8 +262,8 @@ ${type === 'punish' ? 'المطلوب منك الآن: فرض عقاب محدد 
 
 /* ================= النصوص الاحتياطية (Fallback) ================= */
 var P_FALLBACK = [
-  "قف في الزاوية ووجهك للحائط ويداك خلف ظهرك، 10 دقائق.",
-  "اكتب 10 مرات: «التأخير إهانة وانعدام انضباط».",
+  "قِف في الزاوية ووجهك للحائط ويداك خلف ظهرك، 10 دقائق.",
+  "اكتب 10 مرات: «التأخير إهانة وانعدام انضباط أمام سيدتي».",
   "امشِ بظهر مستقيم 15 دورة في الغرفة بلا هاتف.",
   "اركع على الأرض وانتظر 5 دقائق بلا حركة أو كلام."
 ];
@@ -319,21 +319,21 @@ var findTask=function(id){ for(var i=0;i<S.tasks.length;i++) if(S.tasks[i].id===
 var findPun=function(id){ for(var i=0;i<S.puns.length;i++) if(S.puns[i].id===id) return S.puns[i]; return null; };
 
 function head(){
-  $("#hn").textContent=S.p.name?"سيدك · "+S.p.name:"سيدك";
+  $("#hn").textContent=S.p.name?"سيدتك · "+S.p.name:"سيدتك";
   $("#hl").textContent="مستوى "+S.lvl;
   $("#hs").textContent=S.paused?"موقوف بكلمة الأمان":"طاعة "+S.score+" · سلسلة "+S.streak+" · اليوم "+S.today.done+"/"+S.today.quota;
 }
 
 /* ================= المحرك والوظائف ================= */
 async function giveTask(){
-  if(S.paused){ return say("التنفيذ موقوف. قل كلمة الأمان للعودة."); }
+  if(S.paused){ return say("التنفيذ موقوف. انطق كلمة الأمان للعودة."); }
   
-  var aiTaskText = await fetchAIResponse("أعطني أمراً أو مهمة انضباطية الآن.", "task");
-  var taskText = aiTaskText || "قم بأداء 20 تمرين ضغط الآن ثم أبلغني فوراً بإنشائك للمهمة.";
+  var aiTaskText = await fetchAIResponse("أعطني أمراً أو مهمة انضباطية الآن بصيغة المذكر.", "task");
+  var taskText = aiTaskText || "قم بأداء 20 تمرين ضغط الآن ولا تتذمر، ثم أبلغني فورا.";
   
   var task={id:uid(),text:taskText,due:Date.now()+15*60000,state:"open"};
   S.tasks.push(task); save();
-  await say("〔أمر انضباطي〕\n"+task.text,{kind:"task",tid:task.id});
+  await say("〔أمر من سيدتك〕\n"+task.text,{kind:"task",tid:task.id});
   head();
 }
 
@@ -343,8 +343,8 @@ async function doTask(id){
   S.score+=2; S.today.done++;
   head(); render();
   
-  var aiResponse = await fetchAIResponse("لقد أنجزت المهمة المطلوبة مني بنجاح.");
-  await say(aiResponse || "جيد. تقبّلت إنجازك، لا تتراخَ وتوقع المزيد.");
+  var aiResponse = await fetchAIResponse("لقد أنجزت المهمة المطلوبة مني يا سيدتي بنجاح.");
+  await say(aiResponse || "جيد. تقبّلت إنجازك، لا تتراخَ وتوقّع المزيد مني.");
   save();
 }
 
@@ -354,33 +354,33 @@ async function missTask(id){
   S.score=Math.max(0,S.score-2); S.today.fail++;
   head(); render();
   
-  var aiResponse = await fetchAIResponse("لقد فشلت في تنفيذ المهمة المطلوبة.");
-  await say(aiResponse || "تقصير غير مقبول. ستتحمل عقوبة هذا الإهمال.");
+  var aiResponse = await fetchAIResponse("لقد فشلت في تنفيذ المهمة التي أمرتني بها يا سيدتي.");
+  await say(aiResponse || "تقصير غير مقبول منك. ستتحمل عقوبة إهمالك الآن.");
   await punish();
   save();
 }
 
 async function punish(){
-  var aiPunishText = await fetchAIResponse("أحتاج عقاباً حازماً بسبب التقصير.", "punish");
+  var aiPunishText = await fetchAIResponse("أحتاج عقاباً حازماً وصارماً بسبب تقصيره.", "punish");
   var txt = aiPunishText || rnd(P_FALLBACK);
   
   var pun={id:uid(),text:txt,state:"open",ts:Date.now()};
   S.puns.push(pun); S.plog.unshift({t:txt,ts:Date.now()});
-  await say("〔عقاب وانضباط〕:\n"+txt,{kind:"pun",pid:pun.id});
+  await say("〔عقاب من سيدتك〕:\n"+txt,{kind:"pun",pid:pun.id});
   save();
 }
 
 async function reply(txt){
   if(txt.trim()===S.p.safe.trim()){
     S.paused=!S.paused; head();
-    return say(S.paused?"توقف كامل. تم تفعيل كلمة الأمان. لن تصدر أية أوامر حتى تلغي التوقف.":"عدنا. الانضباط لا يتوقف.");
+    return say(S.paused?"توقف كامل. تم تفعيل كلمة الأمان. لن تصدر أي أوامر حتى تلغي التوقف بنفسك.":"عدنا. الانضباط تحت إمرتي لا يتوقف.");
   }
   
   var aiResponse = await fetchAIResponse(txt);
   if (aiResponse) {
     await say(aiResponse);
   } else {
-    await say("مسموع يا "+S.p.name+". نفّذ ما عليك ولا تضيع الوقت في الكلام.");
+    await say("سمعتك يا "+S.p.name+". نفّذ ما أمرتك به ولا تضيّع وقتي في الكلام الفارغ.");
   }
 }
 
@@ -396,7 +396,7 @@ function boot(){
   $("#app").classList.remove("hide");
   render(); head();
   if(!S.log.length) {
-    say("أهلاً بك يا "+S.p.name+". أنا سيدك من الآن. وقتك، انضباطك، وحركتك تحت نصائحي وأوامري. هل أنت مستعد؟");
+    say("أهلاً بك يا "+S.p.name+". أنا سيدتك من هذه اللحظة. وقتك، انضباطك، وحركتك تحت طاعتي وأوامري. هل أنت جاهز؟");
   }
 }
 
@@ -424,16 +424,16 @@ document.addEventListener("click",function(e){
   if(b.dataset.no){ missTask(b.dataset.no); return; }
   if(b.dataset.pd){
     var p=findPun(b.dataset.pd);
-    if(p&&p.state==="open"){ p.state="done"; S.score+=2; head(); render(); say("تم تنفيذ العقاب. استمر بنفس الالتزام."); save(); }
+    if(p&&p.state==="open"){ p.state="done"; S.score+=2; head(); render(); say("تم تنفيذ العقاب تحت عيني. استمر على طاعتك."); save(); }
     return;
   }
   var a=b.dataset.a;
-  if(a==="task"){ push("u","أمرني بشيء."); giveTask(); }
-  if(a==="report"){ push("u","تقريري اليومي."); reply("أريد تقريراً مختصراً عن يومك وما حققته وما قصرت فيه."); }
-  if(a==="confess"){ push("u","عندي اعتراف."); reply("تحدث بصراحة وتذكر أن الصدق أساس الانضباط."); }
+  if(a==="task"){ push("u","مريني بشيء."); giveTask(); }
+  if(a==="report"){ push("u","تقريري اليومي."); reply("أريد تقريراً مختصراً ومباشراً عما أنجزته وما قصرت فيه اليوم يا فتى."); }
+  if(a==="confess"){ push("u","عندي اعتراف."); reply("تحدث بصراحة تامة وتذكر أن الصدق هو أقل ما أطلبه منك."); }
   if(a==="punish"){ push("u","عاقبني."); punish(); }
-  if(a==="rules"){ push("u","القواعد."); say("1. التنفيذ أولاً.\n2. لا أعذار واهية.\n3. الالتزام بالمواعيد والحدود."); }
-  if(a==="stats"){ push("u","وضعي الحالي."); say("نقاط طاعتك: "+S.score+"\nمستواك: "+S.lvl+"\nسلسلة الالتزام: "+S.streak+" أيام"); }
+  if(a==="rules"){ push("u","القواعد."); say("1. التنفيذ الفوري لأوامري دون نقاش.\n2. ممنوع الأعذار الواهية.\n3. الالتزام المطلق بحدودك ومواعيدك."); }
+  if(a==="stats"){ push("u","وضعي الحالي."); say("نقاط طاعتك لي: "+S.score+"\nمستواك: "+S.lvl+"\nسلسلة التزامك: "+S.streak+" أيام"); }
 });
 
 $("#btnSet").onclick=openSheet;
@@ -448,7 +448,6 @@ $("#sSave").onclick=function(){
   save(); head(); $("#sheet").classList.remove("on");
 };
 
-// تشغيل تلقائي
 var loaded=load();
 if(loaded){ S=loaded; boot(); }
 })();
